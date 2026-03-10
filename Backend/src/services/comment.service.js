@@ -29,3 +29,13 @@ export const createPostComment = async ({ postId, authorId, content }) => {
 
   return toCommentResponse(createdComment);
 };
+
+export const deleteCommentById = async commentId => {
+  const deletedComment = await Comment.findByIdAndDelete(commentId);
+
+  if (!deletedComment) {
+    const error = new Error('Comment not found');
+    error.statusCode = 404;
+    throw error;
+  }
+};
