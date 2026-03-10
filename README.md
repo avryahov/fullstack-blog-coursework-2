@@ -23,11 +23,12 @@
 
 - `docs/architecture.md` — целевая архитектура и API-контракты
 - `docs/migration-plan.md` — порядок реализации, риски и зависимости
+- `DevOps/local-mongodb.md` — правило текущего этапа для локального MongoDB-контейнера
 
 ## Ближайшие этапы
 
-1. Добавить доменные модели MongoDB и seed-структуру.
-2. Реализовать auth baseline и middleware доступа.
-3. Перенести backend-логику из старого BFF в отдельный backend.
-4. Перевести frontend на работу с реальным API.
-5. Подготовить локальный full-stack запуск и затем Docker Compose.
+1. Реализовать auth baseline и middleware доступа.
+2. Перенести backend-логику из старого BFF в отдельный backend.
+3. Перевести frontend на работу с реальным API.
+4. Подготовить локальную проверку backend с MongoDB-контейнером.
+5. Только после этого переходить к Docker Compose.
