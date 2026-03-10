@@ -57,6 +57,20 @@ export const getPostsList = async ({ page, limit, search }) => {
   };
 };
 
+export const createPostItem = async ({ title, imageUrl, content }) => {
+  const post = await Post.create({
+    title: title.trim(),
+    imageUrl: typeof imageUrl === 'string' ? imageUrl.trim() : '',
+    content: content.trim(),
+    publishedAt: new Date(),
+  });
+
+  return {
+    ...toPostDetail(post),
+    comments: [],
+  };
+};
+
 export const getPostById = async postId => {
   const [post, comments] = await Promise.all([
     Post.findById(postId),

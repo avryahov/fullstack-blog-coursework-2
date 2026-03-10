@@ -1,5 +1,4 @@
-import { getPostsList } from '../services/post.service.js';
-import { getPostById } from '../services/post.service.js';
+import { createPostItem, getPostById, getPostsList } from '../services/post.service.js';
 
 export const getPosts = async (req, res, next) => {
   try {
@@ -19,6 +18,18 @@ export const getPost = async (req, res, next) => {
     const post = await getPostById(req.params.id);
 
     res.status(200).json({
+      post,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createPost = async (req, res, next) => {
+  try {
+    const post = await createPostItem(req.body);
+
+    res.status(201).json({
       post,
     });
   } catch (error) {
