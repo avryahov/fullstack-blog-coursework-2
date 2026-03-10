@@ -165,6 +165,11 @@
 - service, route wiring, validation, middleware, runtime fix и documentation допускается фиксировать раздельно;
 - целевая суммарная история проекта должна содержать не менее 100 коммитов.
 
+Формат сообщений по веткам:
+- в `dev` допустимы сообщения с обычными префиксами `feat`, `fix`, `chore`, `content` и подобными;
+- в feature-ветках commit должен иметь вид `feature/<name>: message`;
+- дублировать после двоеточия второй префикс вроде `feat:` или `fix:` нельзя.
+
 Рекомендуемый порядок коммитов:
 1. bootstrap structure
 2. backend skeleton
