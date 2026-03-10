@@ -236,6 +236,11 @@ Backend/
 - `GET /api/roles`
   список ролей, только `admin`
 
+Текущее состояние в коде:
+- `GET /api/users`, `PATCH /api/users/:id/role`, `DELETE /api/users/:id` и `GET /api/roles` реализованы;
+- для локальной разработки seed поднимает demo `admin`, `moder` и `reader`;
+- `PATCH/DELETE` для постов и frontend-интеграция остаются следующими этапами.
+
 ## Response shape
 
 Для нового API внешний контракт должен быть в `camelCase`.

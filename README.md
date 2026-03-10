@@ -8,7 +8,7 @@
 - целевая структура проекта;
 - архитектурные решения для frontend, backend и devops-слоя;
 - план миграции из reference-проекта;
-- минимальный backend skeleton для дальнейшей поэтапной реализации.
+- backend API baseline с auth, posts, comments, roles и users admin endpoints.
 
 Реализация прикладного кода выполняется поэтапно после фиксации архитектуры и контрактов.
 
@@ -26,8 +26,14 @@
 
 ## Ближайшие этапы
 
-1. Реализовать auth baseline и middleware доступа.
-2. Перенести backend-логику из старого BFF в отдельный backend.
-3. Перевести frontend на работу с реальным API.
-4. Подготовить локальную проверку backend с MongoDB-контейнером.
-5. Только после этого переходить к Docker Compose.
+1. Перенести frontend на работу с backend API.
+2. Дореализовать update/delete для постов.
+3. Подготовить локальную full-stack проверку frontend + backend + MongoDB.
+4. После этого собрать docker-compose контур.
+
+## Backend seed
+
+Для локальной backend-проверки seed создает роли и demo-пользователей:
+- `admin` / `Admin#123`
+- `moder` / `Moder#123`
+- `reader` / `Reader#123`
