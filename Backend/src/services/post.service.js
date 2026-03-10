@@ -13,6 +13,7 @@ const toPostDetail = post => ({
   imageUrl: post.imageUrl,
   content: post.content,
   publishedAt: post.publishedAt,
+  comments: [],
 });
 
 export const getPostsList = async ({ page, limit, search }) => {
