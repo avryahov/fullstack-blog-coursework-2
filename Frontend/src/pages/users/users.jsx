@@ -36,7 +36,16 @@ export const Users = () => {
   }, [requestServer, shouldUpdateUsers, userRole]);
 
   const onUserRemove = userId => {
-    requestServer('removeUser', userId).then(() => setShouldUpdateUsers(prev => !prev));
+    requestServer('removeUser', userId).then(({ error }) => {
+      if (error) {
+        setErrorMessage(error);
+
+        return;
+      }
+
+      setErrorMessage('');
+      setShouldUpdateUsers(prev => !prev);
+    });
   };
 
   return (
@@ -52,6 +61,7 @@ export const Users = () => {
           <UserRow
             key={id}
             {...{ id, login, registeredAt, roleId, onUserRemove }}
+            onRoleChangeError={setErrorMessage}
             rolesList={rolesList.filter(({ key }) => key !== ROLE.GUEST)}
           />
         ))}

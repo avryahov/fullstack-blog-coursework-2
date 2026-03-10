@@ -7,7 +7,7 @@ import { useServerRequest } from '../../../../hooks';
 import { PROP_TYPE } from '../../../../constant';
 
 /* eslint-disable react/prop-types */
-export const UserRow = ({ login, id, registeredAt, roleId: userRoleId, rolesList, onUserRemove }) => {
+export const UserRow = ({ login, id, registeredAt, roleId: userRoleId, rolesList, onUserRemove, onRoleChangeError }) => {
   const [selectedtRoleId, setSelectedRoleId] = useState(userRoleId);
   const [initialRoleId, setInitialRoleid] = useState(userRoleId);
 
@@ -17,7 +17,17 @@ export const UserRow = ({ login, id, registeredAt, roleId: userRoleId, rolesList
   };
 
   const onRoleSave = (userId, newUserRoleId) => {
-    requestServer('updateUserRole', userId, newUserRoleId).then(() => setInitialRoleid(newUserRoleId));
+    requestServer('updateUserRole', userId, newUserRoleId).then(({ error }) => {
+      if (error) {
+        onRoleChangeError(error);
+        setSelectedRoleId(initialRoleId);
+
+        return;
+      }
+
+      onRoleChangeError('');
+      setInitialRoleid(newUserRoleId);
+    });
   };
 
   const isSaveButtonDisabled = selectedtRoleId === initialRoleId;
@@ -82,4 +92,5 @@ UserRow.propTypes = {
   roleId: PropTypes.string.isRequired,
   rolesList: PropTypes.arrayOf(PROP_TYPE.ROLE).isRequired,
   onUserRemove: PropTypes.func.isRequired,
+  onRoleChangeError: PropTypes.func.isRequired,
 };

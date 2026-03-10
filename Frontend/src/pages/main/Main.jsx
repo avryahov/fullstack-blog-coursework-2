@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { Error } from '../../components';
 import { PAGINATION_LIMIT } from '../../constant';
 import { useServerRequest } from '../../hooks';
 import { Pagination, PostCard, Search } from './components';
 import { debounce } from './utils';
 
 export const Main = () => {
+  const [errorMessage, setErrorMessage] = useState('');
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
@@ -16,9 +18,13 @@ export const Main = () => {
   useEffect(() => {
     requestServer('fetchPosts', searchPhrase, page, PAGINATION_LIMIT).then(({ res, error }) => {
       if (error) {
+        setErrorMessage(error);
+        setPosts([]);
+
         return;
       }
 
+      setErrorMessage('');
       setPosts(res.posts);
       setLastPage(Number(res.count));
     });
@@ -35,7 +41,9 @@ export const Main = () => {
     <MainContainer>
       <div className="posts-and-search">
         <Search searchPhrase={searchPhrase} onChange={onSearch} />
-        {posts.length > 0 ? (
+        {errorMessage ? (
+          <Error error={errorMessage} />
+        ) : posts.length > 0 ? (
           <div className="post-list">
             {posts.map(({ id, publishedAt, title, commentsCount, imageUrl }) => (
               <PostCard key={id} {...{ id, publishedAt, title, commentsCount, imageUrl }} />
