@@ -1,12 +1,12 @@
 import { getPostsList } from '../services/post.service.js';
 
-export const getPosts = async (_req, res, next) => {
+export const getPosts = async (req, res, next) => {
   try {
-    const posts = await getPostsList();
+    const page = Number(req.query.page || 1);
+    const limit = Number(req.query.limit || 10);
+    const result = await getPostsList({ page, limit });
 
-    res.status(200).json({
-      posts,
-    });
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }

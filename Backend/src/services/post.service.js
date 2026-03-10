@@ -7,8 +7,23 @@ const toPostListItem = post => ({
   publishedAt: post.publishedAt,
 });
 
-export const getPostsList = async () => {
-  const posts = await Post.find().sort({ publishedAt: -1 });
+export const getPostsList = async ({ page, limit }) => {
+  const safePage = Number.isInteger(page) && page > 0 ? page : 1;
+  const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : 10;
+  const skip = (safePage - 1) * safeLimit;
 
-  return posts.map(toPostListItem);
+  const [posts, total] = await Promise.all([
+    Post.find().sort({ publishedAt: -1 }).skip(skip).limit(safeLimit),
+    Post.countDocuments(),
+  ]);
+
+  return {
+    posts: posts.map(toPostListItem),
+    pagination: {
+      page: safePage,
+      limit: safeLimit,
+      total,
+      pages: Math.ceil(total / safeLimit),
+    },
+  };
 };
