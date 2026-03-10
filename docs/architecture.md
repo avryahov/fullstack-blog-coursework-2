@@ -201,6 +201,10 @@ Backend/
 - `GET /api/auth/me`
   возвращает текущего пользователя по токену
 
+Текущее состояние в коде:
+- auth baseline реализуется через JWT access token;
+- `register`, `login` и `me` являются первым обязательным набором endpoint'ов.
+
 ### Posts
 
 - `GET /api/posts?search=&page=1&limit=9`
