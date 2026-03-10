@@ -7,6 +7,14 @@ const toPostListItem = post => ({
   publishedAt: post.publishedAt,
 });
 
+const toPostDetail = post => ({
+  id: post.id,
+  title: post.title,
+  imageUrl: post.imageUrl,
+  content: post.content,
+  publishedAt: post.publishedAt,
+});
+
 export const getPostsList = async ({ page, limit, search }) => {
   const safePage = Number.isInteger(page) && page > 0 ? page : 1;
   const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : 10;
@@ -38,4 +46,16 @@ export const getPostsList = async ({ page, limit, search }) => {
       search: safeSearch,
     },
   };
+};
+
+export const getPostById = async postId => {
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    const error = new Error('Post not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return toPostDetail(post);
 };
