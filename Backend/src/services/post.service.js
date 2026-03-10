@@ -17,7 +17,8 @@ const toPostDetail = post => ({
 
 const toCommentItem = comment => ({
   id: comment.id,
-  authorId: comment.authorId.toString(),
+  authorId: comment.authorId?._id ? comment.authorId._id.toString() : comment.authorId.toString(),
+  author: comment.authorId?.login || null,
   postId: comment.postId.toString(),
   content: comment.content,
   publishedAt: comment.publishedAt,
@@ -59,7 +60,7 @@ export const getPostsList = async ({ page, limit, search }) => {
 export const getPostById = async postId => {
   const [post, comments] = await Promise.all([
     Post.findById(postId),
-    Comment.find({ postId }).sort({ publishedAt: 1 }),
+    Comment.find({ postId }).populate({ path: 'authorId', select: 'login' }).sort({ publishedAt: 1 }),
   ]);
 
   if (!post) {
