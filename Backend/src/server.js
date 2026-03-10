@@ -1,9 +1,11 @@
 import { createApp } from './app/create-app.js';
-import { env } from './config/env.js';
+import { readServerEnv } from './config/env.js';
 import { connectDatabase } from './config/database.js';
 
 const startServer = async () => {
-  await connectDatabase();
+  const env = readServerEnv();
+
+  await connectDatabase(env.mongoUri);
 
   const app = createApp();
 

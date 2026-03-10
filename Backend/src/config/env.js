@@ -2,17 +2,23 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const requiredEnv = ['PORT', 'MONGO_URI', 'CLIENT_ORIGIN', 'JWT_SECRET'];
+const readRequired = key => {
+  const value = process.env[key];
 
-for (const key of requiredEnv) {
-  if (!process.env[key]) {
+  if (!value) {
     throw new Error(`Missing required environment variable: ${key}`);
   }
-}
 
-export const env = {
-  port: Number(process.env.PORT),
-  mongoUri: process.env.MONGO_URI,
-  clientOrigin: process.env.CLIENT_ORIGIN,
-  jwtSecret: process.env.JWT_SECRET,
+  return value;
 };
+
+export const readDatabaseEnv = () => ({
+  mongoUri: readRequired('MONGO_URI'),
+});
+
+export const readServerEnv = () => ({
+  port: Number(readRequired('PORT')),
+  mongoUri: readRequired('MONGO_URI'),
+  clientOrigin: readRequired('CLIENT_ORIGIN'),
+  jwtSecret: readRequired('JWT_SECRET'),
+});

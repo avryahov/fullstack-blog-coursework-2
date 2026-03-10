@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
-import { env } from '../config/env.js';
+import { readDatabaseEnv } from '../config/env.js';
 import { Role } from '../models/index.js';
 import { roleSeed } from './role-seed.js';
 
 const runSeed = async () => {
+  const env = readDatabaseEnv();
+
   await mongoose.connect(env.mongoUri);
 
   await Role.deleteMany({});
