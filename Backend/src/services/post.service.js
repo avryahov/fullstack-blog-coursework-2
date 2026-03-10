@@ -1,4 +1,4 @@
-import { Post } from '../models/index.js';
+import { Comment, Post } from '../models/index.js';
 
 const toPostListItem = post => ({
   id: post.id,
@@ -13,7 +13,14 @@ const toPostDetail = post => ({
   imageUrl: post.imageUrl,
   content: post.content,
   publishedAt: post.publishedAt,
-  comments: [],
+});
+
+const toCommentItem = comment => ({
+  id: comment.id,
+  authorId: comment.authorId.toString(),
+  postId: comment.postId.toString(),
+  content: comment.content,
+  publishedAt: comment.publishedAt,
 });
 
 export const getPostsList = async ({ page, limit, search }) => {
@@ -50,7 +57,10 @@ export const getPostsList = async ({ page, limit, search }) => {
 };
 
 export const getPostById = async postId => {
-  const post = await Post.findById(postId);
+  const [post, comments] = await Promise.all([
+    Post.findById(postId),
+    Comment.find({ postId }).sort({ publishedAt: 1 }),
+  ]);
 
   if (!post) {
     const error = new Error('Post not found');
@@ -58,5 +68,8 @@ export const getPostById = async postId => {
     throw error;
   }
 
-  return toPostDetail(post);
+  return {
+    ...toPostDetail(post),
+    comments: comments.map(toCommentItem),
+  };
 };
