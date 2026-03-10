@@ -1,5 +1,5 @@
 export const authorize = allowedRoles => (req, _res, next) => {
-  const userRole = req.user?.role?.key;
+  const userRole = req.user?.role?.key || req.user?.roleId?.key;
 
   if (!userRole || !allowedRoles.includes(userRole)) {
     const error = new Error('Forbidden');
