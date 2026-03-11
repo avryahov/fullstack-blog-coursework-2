@@ -1,7 +1,4 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { API_KEYS } from './constant/api-keys';
 
 const FooterDiv = styled.div({
   display: 'flex',
@@ -17,23 +14,6 @@ const FooterDiv = styled.div({
 });
 
 export const Footer = () => {
-  const [city, setCity] = useState('');
-  const [temperature, setTemperature] = useState('');
-  const [pressure, setPressure] = useState('');
-
-  useEffect(() => {
-    const headers = {
-      'X-Yandex-Weather-Key': API_KEYS.WEATHER_API,
-    };
-    axios
-      .get('https://api.weather.yandex.ru/v2/forecast?lat=55.7558648&lon=37.617698&lang=ru_RU', { headers })
-      .then(({ data: { fact } }) => {
-        setCity('Москва');
-        setTemperature(fact.temp);
-        setPressure(fact.pressure_mm);
-      });
-  }, []);
-
   return (
     <FooterDiv>
       <div>
@@ -41,12 +21,8 @@ export const Footer = () => {
         <div>web@developer.ru</div>
       </div>
       <div>
-        <div>
-          {city}, {new Date().toLocaleString('ru', { day: 'numeric', month: 'long' })}
-        </div>
-        <div>
-          {temperature} градусов, {pressure} мм рт ст
-        </div>
+        <div>{new Date().toLocaleString('ru', { day: 'numeric', month: 'long' })}</div>
+        <div>Погодный виджет отключен</div>
       </div>
     </FooterDiv>
   );

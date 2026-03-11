@@ -24,6 +24,9 @@
 - `docs/architecture.md` — целевая архитектура и API-контракты
 - `docs/migration-plan.md` — порядок реализации, риски и зависимости
 - `docs/frontend-parity-runbook.md` — локальный сценарий проверки frontend parity для post edit/delete
+- `docs/reverse-tests/README.md` — каталог reverse/parity-тестов и история ревизий
+- `docs/reverse-tests/test-cases.md` — базовая матрица reverse-тестов для повторных прогонов
+- `docs/reverse-tests/revisions/2026-03-11-reverse-test-01.md` — первая датированная ревизия reverse-тестирования
 
 ## Ближайшие этапы
 
@@ -81,3 +84,11 @@ Frontend ожидает backend API на `http://localhost:3001/api`, что с�
 - `DELETE /api/posts/:id`
 - повторный `GET /api/posts/:id` должен вернуть `404`
 - если перед удалением создан комментарий, после удаления поста связанный комментарий тоже должен исчезнуть вместе с постом
+
+## Reverse Testing
+
+Reverse-тестирование ведётся в каталоге `docs/reverse-tests/`.
+
+- `test-cases.md` фиксирует стабильную матрицу проверок по ролям, API, UI и negative scenarios;
+- `revisions/` хранит датированные отчёты по каждому фактическому прогону;
+- первая baseline-ревизия для миграции: `2026-03-11-reverse-test-01.md`.
