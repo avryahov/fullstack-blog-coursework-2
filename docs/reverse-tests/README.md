@@ -27,3 +27,5 @@
 - `2026-03-11-reverse-test-02.md` — повторный reverse-test после фикса seed demo-state, `commentsCount` и error UX
 - `2026-03-11-reverse-test-03.md` — post-merge runtime re-check по frontend deep links и backend ACL
 - `2026-03-11-reverse-test-04.md` — targeted UI regression fix для post HTML rendering/edit prefill
+- `2026-03-11-reverse-test-05.md` — automated regression coverage для post HTML rendering/edit prefill
+- `2026-03-11-reverse-test-06.md` — automated ACL/UI guard coverage для protected frontend screens

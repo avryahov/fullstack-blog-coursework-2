@@ -30,13 +30,14 @@
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-02.md` — повторная ревизия после закрытия baseline parity-gap
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-03.md` — post-merge runtime re-check по deep links и backend ACL
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-04.md` — targeted UI regression fix для post HTML rendering/edit prefill
+- `docs/reverse-tests/revisions/2026-03-11-reverse-test-05.md` — automated regression coverage для post HTML rendering/edit prefill
+- `docs/reverse-tests/revisions/2026-03-11-reverse-test-06.md` — automated ACL/UI guard coverage для protected frontend screens
 
 ## Ближайшие этапы
 
-1. Дореализовать update/delete для постов.
-2. Подтвердить поведенческий parity frontend с исходным `author-blog`.
-3. Подготовить backend BFF adapter layer отдельным этапом.
-4. После этого перейти к docker-compose и DevOps-контуру.
+1. Закрыть полноценный browser e2e smoke поверх уже подтвержденного live runtime parity.
+2. Подготовить backend BFF adapter layer отдельным этапом.
+3. После этого перейти к docker-compose и DevOps-контуру.
 
 ## Backend seed
 
@@ -102,3 +103,5 @@ Reverse-тестирование ведётся в каталоге `docs/revers
 - follow-up ревизия после фикса seed demo-state, `commentsCount` и error UX: `2026-03-11-reverse-test-02.md`.
 - post-merge ревизия по deep-link route serving и backend ACL: `2026-03-11-reverse-test-03.md`.
 - targeted UI regression fix по post HTML rendering/edit prefill: `2026-03-11-reverse-test-04.md`.
+- automated regression coverage по post HTML rendering/edit prefill: `2026-03-11-reverse-test-05.md`.
+- automated ACL/UI guard coverage по protected frontend screens: `2026-03-11-reverse-test-06.md`.
