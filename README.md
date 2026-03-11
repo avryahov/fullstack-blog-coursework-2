@@ -8,7 +8,7 @@
 - целевая структура проекта;
 - архитектурные решения для frontend, backend и devops-слоя;
 - план миграции из reference-проекта;
-- backend API baseline с auth, posts, comments, roles и users admin endpoints.
+- backend API с auth, posts, comments, roles и users admin endpoints.
 
 Реализация прикладного кода выполняется поэтапно после фиксации архитектуры и контрактов.
 
@@ -27,7 +27,7 @@
 ## Ближайшие этапы
 
 1. Дореализовать update/delete для постов.
-2. Выделить отдельный frontend api/dto/endpoints слой.
+2. Подтвердить поведенческий parity frontend с исходным `author-blog`.
 3. Подготовить backend BFF adapter layer отдельным этапом.
 4. После этого перейти к docker-compose и DevOps-контуру.
 
@@ -48,11 +48,12 @@
 - роли на клиенте;
 - список постов;
 - просмотр страницы поста;
+- создание поста;
+- update/delete post API на backend;
 - комментарии create/delete;
 - страница пользователей для admin.
 
 В этом этапе намеренно не делаются:
-- update/delete постов;
 - отдельные DTO/endpoints/FSD-слои;
 - BFF-адаптер;
 - compose/devops-обвязка.
@@ -68,3 +69,14 @@
    `cd Frontend && npm install && npm start`
 
 Frontend ожидает backend API на `http://localhost:3001/api`, что соответствует `Backend/.env.example`.
+
+## Backend posts smoke-check
+
+Минимальный ручной smoke для backend post lifecycle перед frontend parity-проверкой:
+- логин под `admin` / `Admin#123`
+- `POST /api/posts`
+- `PATCH /api/posts/:id`
+- `GET /api/posts/:id`
+- `DELETE /api/posts/:id`
+- повторный `GET /api/posts/:id` должен вернуть `404`
+- если перед удалением создан комментарий, после удаления поста связанный комментарий тоже должен исчезнуть вместе с постом

@@ -1,4 +1,4 @@
-import { createPostItem, getPostById, getPostsList } from '../services/post.service.js';
+import { createPostItem, deletePostById, getPostById, getPostsList, updatePostById } from '../services/post.service.js';
 
 export const getPosts = async (req, res, next) => {
   try {
@@ -32,6 +32,28 @@ export const createPost = async (req, res, next) => {
     res.status(201).json({
       post,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updatePost = async (req, res, next) => {
+  try {
+    const post = await updatePostById(req.params.id, req.body);
+
+    res.status(200).json({
+      post,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deletePost = async (req, res, next) => {
+  try {
+    await deletePostById(req.params.id);
+
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
