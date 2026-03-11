@@ -33,12 +33,28 @@ Frontend остается отдельным React-приложением, но 
 - псевдо-сессии в памяти приложения;
 - логика агрегации данных уровня backend.
 
+### Текущее состояние frontend API-слоя
+
+- `client.js` отвечает только за transport и auth headers;
+- `endpoints.js` хранит пути и path builders;
+- `dto.js` маппит backend response в UI-friendly shape;
+- `server.js` остается временным facade-слоем для совместимости текущего UI;
+- `operations.js` отделяет public/private вызовы для `useServerRequest`;
+- дальнейший этап может дробить facade по доменам, не меняя pages/components сразу.
+
 ### Планируемая структура Frontend
 
 ```text
 Frontend/
 └── src/
     ├── api/
+    │   ├── auth-storage.js
+    │   ├── client.js
+    │   ├── dto.js
+    │   ├── endpoints.js
+    │   ├── operations.js
+    │   ├── server.js
+    │   └── index.js
     ├── app/
     ├── components/
     ├── hooks/
