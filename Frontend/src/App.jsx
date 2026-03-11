@@ -54,6 +54,7 @@ function App() {
           <Route path="/login" element={<Authorization />} />
           <Route path="/register" element={<Registration />} />
           <Route path="/post/:postId" element={<Post />} />
+          <Route path="/post/:postId/edit" element={<Post />} />
           <Route path="/post" element={<Post />} />
           <Route path="/users" element={<Users />} />
           <Route path="*" element={<Error error={ERROR.PAGE_NOT_EXIST} />} />

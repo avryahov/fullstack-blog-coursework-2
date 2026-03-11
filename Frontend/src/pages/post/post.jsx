@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useMatch, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { postsApi } from '../../api';
 import { RESET_POST_DATA, loadPostAsync } from '../../actions';
@@ -17,8 +17,8 @@ export const Post = () => {
   const post = useSelector(selectPost);
   const dispatch = useDispatch();
   const params = useParams();
-  const location = useLocation();
-  const isCreating = location.pathname === '/post';
+  const isEditing = !!useMatch('/post/:postId/edit');
+  const isCreating = !!useMatch('/post');
 
   useLayoutEffect(() => {
     dispatch(RESET_POST_DATA);
@@ -31,6 +31,8 @@ export const Post = () => {
 
       return;
     }
+
+    setIsLoading(true);
 
     dispatch(loadPostAsync(postsApi.fetchPost, params.postId)).then(postData => {
       setError(postData.error);
@@ -50,7 +52,7 @@ export const Post = () => {
     return <Error error="Пост не найден" />;
   }
 
-  if (isCreating) {
+  if (isEditing || isCreating) {
     return (
       <PostContainer>
         <PrivateContent access={[ROLE.ADMIN]} serverError={null}>
