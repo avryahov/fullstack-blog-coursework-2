@@ -153,7 +153,8 @@ OpenAPI-слой живет в `Backend/src/openapi/` и подключаетс�
 - стабильный справочник для прав доступа.
 
 Текущее состояние в коде:
-- базовая модель и seed для ролей уже заведены в `Backend/src/models` и `Backend/src/seeds`.
+- роли инициализируются migration `001-core-roles`;
+- значения совпадают с reference `db.json`: `admin`, `moder`, `reader`, `guest`.
 
 #### `users`
 
@@ -171,11 +172,12 @@ OpenAPI-слой живет в `Backend/src/openapi/` и подключаетс�
 - index по `roleId`
 
 Примечание:
-- пароль из старого `db.json` переносится только через seed/dev bootstrap и должен быть преобразован в hash.
+- пароль из старого `db.json` переносится через migration-style import и преобразуется в bcrypt hash;
+- для трассировки reference-origin используется `sourceId`.
 
 Текущее состояние в коде:
-- модель заведена;
-- реальный import пользователей из старого проекта будет добавлен отдельным этапом.
+- модель заведена и импорт пользователей уже выполняется migration `002-reference-users`;
+- fresh startup на пустой БД создает полный reference users-set.
 
 #### `posts`
 
@@ -194,7 +196,8 @@ OpenAPI-слой живет в `Backend/src/openapi/` и подключаетс�
 
 Текущее состояние в коде:
 - модель заведена;
-- seed и прикладные операции пока не реализованы.
+- import reference posts выполняется migration `003-reference-posts-comments`;
+- для трассировки исходного `db.json` хранится `sourceId`.
 
 #### `comments`
 
@@ -214,7 +217,8 @@ OpenAPI-слой живет в `Backend/src/openapi/` и подключаетс�
 
 Текущее состояние в коде:
 - модель заведена;
-- seed и прикладные операции пока не реализованы.
+- import reference comments выполняется migration `003-reference-posts-comments`;
+- для сохранения duplicate comment ids из source используется `sourceKey`, потому что в `author-blog/db.json` есть две записи с `id=157`.
 
 ### Relationship strategy
 
@@ -287,7 +291,7 @@ Swagger/OpenAPI должен покрывать:
 
 Текущее состояние в коде:
 - `GET /api/users`, `PATCH /api/users/:id/role`, `DELETE /api/users/:id` и `GET /api/roles` реализованы;
-- для локальной разработки seed поднимает demo `admin`, `moder` и `reader`;
+- для локальной разработки fresh bootstrap и `npm run seed` поднимают полный reference-state из `author-blog/db.json`;
 - `PATCH /api/posts/:id` и `DELETE /api/posts/:id` реализованы на backend;
 - frontend parity для edit/delete post проверяется отдельным следующим этапом.
 

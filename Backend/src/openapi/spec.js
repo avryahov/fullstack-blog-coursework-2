@@ -157,7 +157,7 @@ export const createOpenApiSpec = () => ({
           password: {
             type: 'string',
             pattern: '^[\\w#%]{6,30}$',
-            example: 'Reader#123',
+            example: 'admin123',
             description: '6-30 symbols: letters, digits, underscore, # or %',
           },
         },
