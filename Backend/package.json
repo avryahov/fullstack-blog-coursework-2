@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node src/server.js",
     "start": "node src/server.js",
-    "seed": "node src/seeds/run-seed.js"
+    "seed": "node src/seeds/run-seed.js",
+    "seed:reference": "node src/seeds/run-reference-seed.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

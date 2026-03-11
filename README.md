@@ -50,6 +50,12 @@
 - baseline posts для guest/list/post сценариев;
 - baseline comments для comment/moderation smoke-check.
 
+Если нужен большой Mongo baseline из reference-проекта `author-blog`, используйте:
+- `cd Backend && MONGO_URI=mongodb://127.0.0.1:27017/fullstack-blog-coursework-2 npm run seed:reference`
+- импорт сохраняет локальный smoke-доступ `admin / Admin#123`, `moder / Moder#123`, `reader / Reader#123`;
+- импорт подтягивает `author-blog/db.json` в Mongo и дополнительно сохраняет smoke-аккаунты `moder` / `reader` для текущих локальных проверок;
+- после импорта в БД получается расширенный набор: `15` reference users + `2` smoke users, `31` posts и `383` comments.
+
 ## Frontend Stage 1
 
 Ветка `feature/frontend-migration-stage-1` приносит первый перенос клиента в каталог `Frontend/`.
