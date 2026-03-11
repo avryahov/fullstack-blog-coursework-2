@@ -19,7 +19,7 @@ export const PostContent = ({ post: { id, title, imageUrl, content, publishedAt 
         editButton={<Icon id="fa-pencil-square-o" margin="0 10px 0 0" onClick={() => navigate(`/post/${id}/edit`)} />}
       />
 
-      <div className="post-text">{content}</div>
+      <div className="post-text" dangerouslySetInnerHTML={{ __html: content }} />
     </PostContentContainer>
   );
 };

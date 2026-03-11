@@ -26,6 +26,12 @@ export const PostForm = ({ post: { id, title, imageUrl, content, publishedAt } }
     setNewTitle(title);
   }, [imageUrl, title]);
 
+  useLayoutEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.innerHTML = content;
+    }
+  }, [content]);
+
   const onSave = () => {
     const newContent = sanitizeContent(contentRef.current.innerHTML);
     const savePost = postData => postsApi.savePost(session, postData);
@@ -61,9 +67,7 @@ export const PostForm = ({ post: { id, title, imageUrl, content, publishedAt } }
         {...{ publishedAt, id }}
         editButton={<Icon id="fa-floppy-o" margin="0 10px 0 0" onClick={onSave} />}
       />
-      <div ref={contentRef} className={'post-text'} contentEditable={true} suppressContentEditableWarning={true}>
-        {content}
-      </div>
+      <div ref={contentRef} className={'post-text'} contentEditable={true} suppressContentEditableWarning={true} />
       {serverError && <div className="server-error">{serverError}</div>}
     </PostFormContainer>
   );

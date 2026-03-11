@@ -29,6 +29,7 @@
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-01.md` — первая датированная ревизия reverse-тестирования
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-02.md` — повторная ревизия после закрытия baseline parity-gap
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-03.md` — post-merge runtime re-check по deep links и backend ACL
+- `docs/reverse-tests/revisions/2026-03-11-reverse-test-04.md` — targeted UI regression fix для post HTML rendering/edit prefill
 
 ## Ближайшие этапы
 
@@ -100,3 +101,4 @@ Reverse-тестирование ведётся в каталоге `docs/revers
 - baseline-ревизия для миграции: `2026-03-11-reverse-test-01.md`;
 - follow-up ревизия после фикса seed demo-state, `commentsCount` и error UX: `2026-03-11-reverse-test-02.md`.
 - post-merge ревизия по deep-link route serving и backend ACL: `2026-03-11-reverse-test-03.md`.
+- targeted UI regression fix по post HTML rendering/edit prefill: `2026-03-11-reverse-test-04.md`.
