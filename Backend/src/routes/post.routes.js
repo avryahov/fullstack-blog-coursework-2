@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPost, getPost, getPosts } from '../controllers/post.controller.js';
+import { createPost, deletePost, getPost, getPosts, updatePost } from '../controllers/post.controller.js';
 import { createComment } from '../controllers/comment.controller.js';
 import { authorize } from '../middleware/authorize.js';
 import { authenticate } from '../middleware/authenticate.js';
@@ -11,4 +11,6 @@ export const postRouter = Router();
 postRouter.get('/', getPosts);
 postRouter.get('/:id', getPost);
 postRouter.post('/', authenticate, authorize(['admin']), validatePostBody, createPost);
+postRouter.patch('/:id', authenticate, authorize(['admin']), validatePostBody, updatePost);
+postRouter.delete('/:id', authenticate, authorize(['admin']), deletePost);
 postRouter.post('/:id/comments', authenticate, validateCommentBody, createComment);

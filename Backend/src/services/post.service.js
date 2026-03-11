@@ -71,6 +71,45 @@ export const createPostItem = async ({ title, imageUrl, content }) => {
   };
 };
 
+export const updatePostById = async (postId, { title, imageUrl, content }) => {
+  const post = await Post.findByIdAndUpdate(
+    postId,
+    {
+      title: title.trim(),
+      imageUrl: typeof imageUrl === 'string' ? imageUrl.trim() : '',
+      content: content.trim(),
+    },
+    {
+      new: true,
+    }
+  );
+
+  if (!post) {
+    const error = new Error('Post not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const comments = await Comment.find({ postId }).populate({ path: 'authorId', select: 'login' }).sort({ publishedAt: 1 });
+
+  return {
+    ...toPostDetail(post),
+    comments: comments.map(toCommentItem),
+  };
+};
+
+export const deletePostById = async postId => {
+  const post = await Post.findByIdAndDelete(postId);
+
+  if (!post) {
+    const error = new Error('Post not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  await Comment.deleteMany({ postId });
+};
+
 export const getPostById = async postId => {
   const [post, comments] = await Promise.all([
     Post.findById(postId),
