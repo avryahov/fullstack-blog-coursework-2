@@ -23,6 +23,7 @@
 
 - `docs/architecture.md` — целевая архитектура и API-контракты
 - `docs/migration-plan.md` — порядок реализации, риски и зависимости
+- `docs/frontend-parity-runbook.md` — локальный сценарий проверки frontend parity для post edit/delete
 
 ## Ближайшие этапы
 
