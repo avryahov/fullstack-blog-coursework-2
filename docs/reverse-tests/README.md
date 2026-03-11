@@ -43,6 +43,7 @@ flowchart TD
 - `2026-03-11-reverse-test-05.md` — automated regression coverage для post HTML rendering/edit prefill
 - `2026-03-11-reverse-test-06.md` — automated ACL/UI guard coverage для protected frontend screens
 - `2026-03-11-reverse-test-07.md` — docker-compose + nginx reverse proxy smoke с migration-style Mongo bootstrap
+- `2026-03-11-reverse-test-08.md` — полный reverse regression run по test-cases после `docker compose down -> up --build`
 
 ## When To Add a New Revision
 

@@ -44,7 +44,7 @@ flowchart LR
 - `docs/frontend-parity-runbook.md` — локальный parity-runbook по frontend сценариям
 - `docs/reverse-tests/README.md` — структура reverse/parity-проверок
 - `docs/reverse-tests/test-cases.md` — стабильная матрица ручных проверок
-- `docs/reverse-tests/revisions/2026-03-11-reverse-test-07.md` — compose/proxy smoke после migration-style bootstrap
+- `docs/reverse-tests/revisions/2026-03-11-reverse-test-08.md` — полный reverse regression run после clean compose restart
 
 ## Compose Startup
 
@@ -128,7 +128,8 @@ Reverse-проверки ведутся в `docs/reverse-tests/`.
 - post-merge re-check по deep links и backend ACL;
 - regression coverage для post HTML rendering/edit flow;
 - regression coverage для protected frontend screens;
-- compose + nginx proxy smoke после migration-style Mongo bootstrap.
+- compose + nginx proxy smoke после migration-style Mongo bootstrap;
+- полный reverse regression run по test-cases после `docker compose down -> up --build`.
 
 Текущий быстрый regression-запуск:
 
