@@ -11,15 +11,16 @@ Fullstack target: `/Users/avrjakhov/repositories/git/study/result-university/jun
 | RT-ENV-01 | Поднять MongoDB | Mongo доступен на `127.0.0.1:27017` |
 | RT-ENV-02 | Поднять backend | API доступно на `127.0.0.1:3001/api` |
 | RT-ENV-03 | Поднять frontend | UI доступен на `127.0.0.1:3000` |
-| RT-ENV-04 | Выполнить seed | Созданы роли `admin/moder/reader/guest` и demo users |
+| RT-ENV-04 | Fresh startup или ручной `seed` | Создан полный reference-state из `author-blog/db.json` |
+| RT-ENV-05 | Повторный startup того же compose-контура | Данные не дублируются и не перетираются |
 
 ## RT-AUTH
 
 | ID | Сценарий | Ожидаемый результат |
 |---|---|---|
 | RT-AUTH-01 | Login под admin | `200`, валидный JWT, роль admin |
-| RT-AUTH-02 | Login под moder | `200`, валидный JWT, роль moder |
-| RT-AUTH-03 | Login под reader | `200`, валидный JWT, роль reader |
+| RT-AUTH-02 | Login под moder1 | `200`, валидный JWT, роль moder |
+| RT-AUTH-03 | Login под alex_dev | `200`, валидный JWT, роль reader |
 | RT-AUTH-04 | Wrong credentials | `401` |
 | RT-AUTH-05 | `GET /auth/me` с токеном | `200`, возвращается текущий пользователь |
 | RT-AUTH-06 | `GET /auth/me` без токена | `401` |
@@ -100,3 +101,4 @@ Fullstack target: `/Users/avrjakhov/repositories/git/study/result-university/jun
 | RT-PAR-04 | Admin parity | Управляет постами, пользователями, ролями |
 | RT-PAR-05 | UI hide + backend enforce | Не только скрытие кнопок, но и реальный отказ API |
 | RT-PAR-06 | Архитектурные отличия | JWT/Mongo/ObjectId не считаются регрессией, если бизнес-поведение сохранено |
+| RT-PAR-07 | Data parity | `roles/users/posts/comments` соответствуют reference `db.json` после schema-aware import |

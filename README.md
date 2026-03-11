@@ -8,7 +8,7 @@
 - `Frontend/` с API-вызовами через proxy-friendly base URL;
 - `Backend/` с auth, posts, comments, users и roles endpoints;
 - Swagger/OpenAPI слой для backend c `openapi.json` и Swagger UI через reverse proxy;
-- migration-style bootstrap для MongoDB с журналом прогонов;
+- migration-style bootstrap для MongoDB с журналом прогонов и полным import reference `db.json`;
 - full-stack compose-контур `mongo + backend + frontend + reverse-proxy`;
 - smoke-проверка runtime через `http://localhost:8080`;
 - frontend regression coverage для post HTML rendering/edit flow и protected screens.
@@ -45,7 +45,7 @@ flowchart LR
 - `docs/frontend-parity-runbook.md` — локальный parity-runbook по frontend сценариям
 - `docs/reverse-tests/README.md` — структура reverse/parity-проверок
 - `docs/reverse-tests/test-cases.md` — стабильная матрица ручных проверок
-- `docs/reverse-tests/revisions/2026-03-11-reverse-test-08.md` — полный reverse regression run после clean compose restart
+- `docs/reverse-tests/revisions/2026-03-11-reverse-test-10.md` — parity-подтверждение полного reference db import и idempotent compose startup
 
 ## API Documentation
 
@@ -77,9 +77,11 @@ docker compose ps
 - `reverse-proxy`
 
 Что делает backend в compose:
-- `npm run migrate` — повторяемо применяет Mongo migrations;
+- `npm run migrate` — применяет только еще не выполненные Mongo migrations;
 - `npm run start:compose` — сначала миграции, затем API runtime;
-- `npm run seed` — отдельная ручная операция для reset + повторного bootstrap.
+- fresh startup на пустом volume автоматически импортирует полный `author-blog/db.json`;
+- повторный `docker compose up` не переимпортирует reference-данные поверх существующей БД;
+- `npm run seed` — отдельная ручная destructive-операция для reset + повторного bootstrap.
 
 ## Smoke Check
 
@@ -101,7 +103,7 @@ curl -s http://127.0.0.1:8080/api/posts
 - `GET /api/openapi.json` возвращает OpenAPI JSON через proxy;
 - `GET /api/docs` возвращает Swagger UI через proxy;
 - deep links `/users` и `/post` отдаются через SPA shell;
-- `GET /api/posts` возвращает baseline posts из MongoDB через proxy.
+- `GET /api/posts` возвращает reference posts из MongoDB через proxy.
 
 ## Local Non-Compose Run
 
@@ -115,25 +117,37 @@ cd Frontend && npm install && npm start
 
 В этом режиме frontend ожидает backend API на `http://localhost:3001/api`.
 
-## Demo Data and Seed
+## Reference Data and Seed
 
-Базовый seed создает:
+Базовый bootstrap и ручной `npm run seed` создают один и тот же reference-state:
 - роли `admin`, `moder`, `reader`, `guest`;
-- demo-аккаунты `admin / Admin#123`, `moder / Moder#123`, `reader / Reader#123`;
-- baseline posts для guest/list/post сценариев;
-- baseline comments для comment/moderation smoke-check.
+- полный набор пользователей, постов и комментариев из `author-blog/db.json`;
+- bcrypt-хэши вместо plaintext-паролей;
+- migration journal в `schema_migrations`.
 
-Если нужен расширенный baseline из reference-проекта:
+Compose runtime:
+- на пустом host/volume этот import выполняется автоматически при `docker compose up --build -d`;
+- на повторном startup уже примененные миграции пропускаются;
+- пользовательские или тестовые изменения в существующей БД обычным startup не стираются.
+
+Если нужен ручной destructive reset в тот же reference-state:
 
 ```bash
 cd Backend
-MONGO_URI=mongodb://127.0.0.1:27017/fullstack-blog-coursework-2 npm run seed:reference
+MONGO_URI=mongodb://127.0.0.1:27017/fullstack-blog-coursework-2 npm run seed
 ```
 
-Reference import:
-- тянет данные из `author-blog/db.json`;
-- сохраняет smoke-аккаунты для локальных проверок;
-- дает расширенный набор users/posts/comments поверх базового runtime smoke.
+Примеры reference-учетных данных:
+- `admin / admin123`
+- `moder1 / moder123`
+- `moder2 / moder456`
+
+Состояние данных после fresh bootstrap:
+- `roles`: `4`
+- `users`: `15`
+- `posts`: `31`
+- `comments`: `383`
+- duplicate reference comment id `157` сохранен как две отдельные записи, как и в исходном `db.json`
 
 ## Regression and Reverse Testing
 

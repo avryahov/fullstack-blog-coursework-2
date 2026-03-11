@@ -33,7 +33,7 @@ npm run dev
 
 Ожидаемое поведение:
 - backend слушает `http://localhost:3001`;
-- seed создает demo-пользователей `admin`, `moder`, `reader`;
+- `npm run seed` выполняет destructive reset и затем поднимает полный reference-state из `author-blog/db.json`;
 - API доступно по префиксу `/api`.
 
 ## 3. Поднять frontend
@@ -64,7 +64,7 @@ npm start
 
 Минимальный сценарий:
 
-1. Войти под `admin` / `Admin#123`.
+1. Войти под `admin` / `admin123`.
 2. Открыть существующий пост из списка.
 3. Убедиться, что на странице поста доступны иконки редактирования и удаления.
 4. Перейти по кнопке редактирования на `/post/:postId/edit`.
