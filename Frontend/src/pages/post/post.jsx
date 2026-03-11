@@ -4,10 +4,10 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { postsApi } from '../../api';
 import { RESET_POST_DATA, loadPostAsync } from '../../actions';
 import { Error, PrivateContent } from '../../components';
 import { ROLE } from '../../constant';
-import { useServerRequest } from '../../hooks';
 import { selectPost } from '../../selectors';
 import { Comments, PostContent, PostForm } from './components';
 
@@ -18,7 +18,6 @@ export const Post = () => {
   const dispatch = useDispatch();
   const params = useParams();
   const location = useLocation();
-  const requestServer = useServerRequest();
   const isCreating = location.pathname === '/post';
 
   useLayoutEffect(() => {
@@ -33,11 +32,11 @@ export const Post = () => {
       return;
     }
 
-    dispatch(loadPostAsync(requestServer, params.postId)).then(postData => {
+    dispatch(loadPostAsync(postsApi.fetchPost, params.postId)).then(postData => {
       setError(postData.error);
       setIsLoading(false);
     });
-  }, [dispatch, requestServer, params.postId, isCreating]);
+  }, [dispatch, params.postId, isCreating]);
 
   if (isLoading) {
     return null;

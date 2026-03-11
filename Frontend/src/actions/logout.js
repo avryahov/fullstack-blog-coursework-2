@@ -1,9 +1,9 @@
 import { ACTION_TYPE } from '../constant';
-import { clearAuthData, server } from '../api';
+import { authApi, clearAuthData } from '../api';
 
 export const logout = () => {
   clearAuthData();
-  server.logout();
+  authApi.logout();
 
   return { type: ACTION_TYPE.LOGOUT };
 };

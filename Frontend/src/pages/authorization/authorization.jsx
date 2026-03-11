@@ -6,7 +6,7 @@ import { Link, Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import * as yup from 'yup';
 import { setUser } from '../../actions';
-import { saveAuthData, server } from '../../api';
+import { authApi, saveAuthData } from '../../api';
 import { AuthRegFormError, Button, H2, Input } from '../../components';
 import { ROLE } from '../../constant';
 import { useResetForm } from '../../hooks';
@@ -45,7 +45,7 @@ export const Authorization = () => {
   useResetForm(reset);
 
   const onSubmit = ({ login, password }) => {
-    server.authorize(login, password).then(({ res, error }) => {
+    authApi.authorize(login, password).then(({ res, error }) => {
       if (error) {
         setServerError('Ошибка запроса:' + error);
 

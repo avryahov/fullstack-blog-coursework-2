@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import styled from 'styled-components';
 import { setUser } from './actions';
-import { clearAuthData, readAuthData, server } from './api';
+import { authApi, clearAuthData, readAuthData } from './api';
 import './App.css';
 import { Footer, Modal, StyledHeader, Error } from './components/';
 import { Authorization, Main, Post, Registration, Users } from './pages/';
@@ -33,7 +33,7 @@ function App() {
     const authData = readAuthData();
 
     if (authData?.token) {
-      server.restoreSession(authData.token).then(({ res, error }) => {
+      authApi.restoreSession(authData.token).then(({ res, error }) => {
         if (error) {
           clearAuthData();
 

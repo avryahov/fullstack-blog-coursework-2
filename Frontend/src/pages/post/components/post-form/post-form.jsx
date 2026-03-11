@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react/prop-types */
 import { useLayoutEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { savePostAsync } from '../../../../actions';
+import { postsApi } from '../../../../api';
+import { savePostAsync, selectUserSession } from '../../../../actions';
 import { Input } from '../../../../components';
 import { Icon } from '../../../../components/header/components';
 import { PROP_TYPE } from '../../../../constant';
-import { useServerRequest } from '../../../../hooks';
 import { SpecialPanel } from '../special-panel/special-panel';
 import { sanitizeContent } from './utils/sanitize-content';
 
@@ -18,7 +18,7 @@ export const PostForm = ({ post: { id, title, imageUrl, content, publishedAt } }
   const [serverError, setServerError] = useState('');
   const contentRef = useRef('');
   const dispatch = useDispatch();
-  const requestServer = useServerRequest();
+  const session = useSelector(selectUserSession);
   const navigate = useNavigate();
 
   useLayoutEffect(() => {
@@ -28,10 +28,11 @@ export const PostForm = ({ post: { id, title, imageUrl, content, publishedAt } }
 
   const onSave = () => {
     const newContent = sanitizeContent(contentRef.current.innerHTML);
+    const savePost = postData => postsApi.savePost(session, postData);
 
     setServerError('');
     dispatch(
-      savePostAsync(requestServer, {
+      savePostAsync(savePost, {
         id,
         imageUrl: newImageUrl,
         title: newTitle,

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { rolesApi, usersApi } from '../../api';
 import { H2, PrivateContent } from '../../components';
 import { ROLE } from '../../constant';
-import { useServerRequest } from '../../hooks';
 import { selectUserRole } from '../../selectors';
 import { checkAccess } from '../../utils';
 import { TableRow, UserRow } from './components';
@@ -13,8 +13,7 @@ export const Users = () => {
   const [users, setUsers] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [shouldUpdateUsers, setShouldUpdateUsers] = useState(false);
-
-  const requestServer = useServerRequest();
+  const session = useSelector(state => state.user.session);
 
   const userRole = useSelector(selectUserRole);
 
@@ -23,7 +22,7 @@ export const Users = () => {
       return;
     }
 
-    Promise.all([requestServer('fetchRoles'), requestServer('fetchUsers')]).then(([rolesResponse, usersResponse]) => {
+    Promise.all([rolesApi.fetchRoles(session), usersApi.fetchUsers(session)]).then(([rolesResponse, usersResponse]) => {
       if (usersResponse.error || rolesResponse.error) {
         setErrorMessage(usersResponse.error || rolesResponse.error);
 
@@ -33,10 +32,10 @@ export const Users = () => {
       setUsers(usersResponse.res);
       setRolesList(rolesResponse.res);
     });
-  }, [requestServer, shouldUpdateUsers, userRole]);
+  }, [session, shouldUpdateUsers, userRole]);
 
   const onUserRemove = userId => {
-    requestServer('removeUser', userId).then(({ error }) => {
+    usersApi.removeUser(session, userId).then(({ error }) => {
       if (error) {
         setErrorMessage(error);
 
