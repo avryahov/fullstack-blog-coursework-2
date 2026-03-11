@@ -9,7 +9,9 @@ const runSeed = async () => {
   await mongoose.connect(env.mongoUri);
 
   await resetDatabase();
-  await runMigrations();
+  const result = await runMigrations();
+
+  console.log(JSON.stringify(result, null, 2));
 
   await mongoose.disconnect();
 };

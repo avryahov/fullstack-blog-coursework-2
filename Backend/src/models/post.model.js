@@ -2,6 +2,12 @@ import mongoose from 'mongoose';
 
 const postSchema = new mongoose.Schema(
   {
+    sourceId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+    },
     title: {
       type: String,
       required: true,

@@ -1,8 +1,11 @@
 import mongoose from 'mongoose';
 import { Comment, Post, Role, User } from '../models/index.js';
 import * as migration001 from './001-core-roles.js';
-import * as migration002 from './002-demo-users.js';
-import * as migration003 from './003-baseline-posts-comments.js';
+import * as migration002 from './002-reference-users.js';
+import * as migration003 from './003-reference-posts-comments.js';
+import * as migration004 from './004-clean-legacy-demo-state.js';
+import * as migration005 from './005-reference-comment-source-keys.js';
+import * as migration006 from './006-reconcile-reference-comments.js';
 
 const migrationStateSchema = new mongoose.Schema(
   {
@@ -41,7 +44,7 @@ const migrationStateSchema = new mongoose.Schema(
 
 const MigrationState = mongoose.models.MigrationState || mongoose.model('MigrationState', migrationStateSchema);
 
-const migrations = [migration001, migration002, migration003];
+const migrations = [migration001, migration002, migration003, migration004, migration005, migration006];
 
 export const getDatabaseSummary = async () => ({
   roles: await Role.countDocuments(),
@@ -52,36 +55,35 @@ export const getDatabaseSummary = async () => ({
 
 export const runMigrations = async () => {
   const applied = [];
+  const skipped = [];
 
   for (const [index, migration] of migrations.entries()) {
+    const existingState = await MigrationState.findOne({ key: migration.id });
+
+    if (existingState) {
+      skipped.push(migration.id);
+      continue;
+    }
+
     const now = new Date();
 
     await migration.up();
 
-    const existingState = await MigrationState.findOne({ key: migration.id });
-
-    if (existingState) {
-      existingState.description = migration.description;
-      existingState.order = index + 1;
-      existingState.lastAppliedAt = now;
-      existingState.runs += 1;
-      await existingState.save();
-    } else {
-      await MigrationState.create({
-        key: migration.id,
-        description: migration.description,
-        order: index + 1,
-        firstAppliedAt: now,
-        lastAppliedAt: now,
-        runs: 1,
-      });
-    }
+    await MigrationState.create({
+      key: migration.id,
+      description: migration.description,
+      order: index + 1,
+      firstAppliedAt: now,
+      lastAppliedAt: now,
+      runs: 1,
+    });
 
     applied.push(migration.id);
   }
 
   return {
     applied,
+    skipped,
     summary: await getDatabaseSummary(),
   };
 };

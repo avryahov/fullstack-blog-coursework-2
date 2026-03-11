@@ -2,6 +2,12 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
+    sourceId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+    },
     login: {
       type: String,
       required: true,

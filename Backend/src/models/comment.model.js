@@ -2,6 +2,17 @@ import mongoose from 'mongoose';
 
 const commentSchema = new mongoose.Schema(
   {
+    sourceId: {
+      type: String,
+      sparse: true,
+      trim: true,
+    },
+    sourceKey: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+    },
     postId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Post',
