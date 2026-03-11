@@ -38,9 +38,10 @@ Frontend остается отдельным React-приложением, но 
 - `client.js` отвечает только за transport и auth headers;
 - `endpoints.js` хранит пути и path builders;
 - `dto.js` маппит backend response в UI-friendly shape;
-- `server.js` остается временным facade-слоем для совместимости текущего UI;
+- `domains/` группирует API по bounded context: `auth`, `posts`, `comments`, `users`, `roles`;
+- `server.js` остается временным compatibility-facade поверх доменных модулей;
 - `operations.js` отделяет public/private вызовы для `useServerRequest`;
-- дальнейший этап может дробить facade по доменам, не меняя pages/components сразу.
+- pages/components постепенно переводятся на прямые доменные модули там, где контекст очевиден.
 
 ### Планируемая структура Frontend
 
@@ -51,6 +52,13 @@ Frontend/
     │   ├── auth-storage.js
     │   ├── client.js
     │   ├── dto.js
+    │   ├── domains/
+    │   │   ├── auth.js
+    │   │   ├── comments.js
+    │   │   ├── posts.js
+    │   │   ├── roles.js
+    │   │   ├── users.js
+    │   │   └── index.js
     │   ├── endpoints.js
     │   ├── operations.js
     │   ├── server.js
