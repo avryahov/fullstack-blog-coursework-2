@@ -263,7 +263,8 @@ Backend/
 Текущее состояние в коде:
 - `GET /api/users`, `PATCH /api/users/:id/role`, `DELETE /api/users/:id` и `GET /api/roles` реализованы;
 - для локальной разработки seed поднимает demo `admin`, `moder` и `reader`;
-- `PATCH/DELETE` для постов и frontend-интеграция остаются следующими этапами.
+- `PATCH /api/posts/:id` и `DELETE /api/posts/:id` реализованы на backend;
+- frontend parity для edit/delete post проверяется отдельным следующим этапом.
 
 ## Response shape
 
