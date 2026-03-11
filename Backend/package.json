@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "node src/server.js",
     "start": "node src/server.js",
+    "migrate": "node src/migrations/run-migrations.js",
+    "start:compose": "node src/migrations/run-migrations.js && node src/server.js",
     "seed": "node src/seeds/run-seed.js",
     "seed:reference": "node src/seeds/run-reference-seed.js"
   },
