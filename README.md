@@ -1,144 +1,138 @@
 # Fullstack Blog Coursework 2
 
-Курсовой проект по миграции учебного frontend-приложения блога в full-stack архитектуру на React, Node.js, Express.js и MongoDB.
+Курсовой full-stack проект по миграции учебного блога из frontend-only реализации в схему `React + Node.js + Express.js + MongoDB` с локальным `docker compose` и единым входом через reverse proxy.
 
-## Текущее состояние
+## Project Status
 
-На текущем этапе в репозитории зафиксированы:
-- целевая структура проекта;
-- архитектурные решения для frontend, backend и devops-слоя;
-- план миграции из reference-проекта;
-- backend API с auth, posts, comments, roles и users admin endpoints.
+На 2026-03-11 в репозитории уже собраны и локально проверены:
+- `Frontend/` с API-вызовами через proxy-friendly base URL;
+- `Backend/` с auth, posts, comments, users и roles endpoints;
+- migration-style bootstrap для MongoDB с журналом прогонов;
+- full-stack compose-контур `mongo + backend + frontend + reverse-proxy`;
+- smoke-проверка runtime через `http://localhost:8080`;
+- frontend regression coverage для post HTML rendering/edit flow и protected screens.
 
-Реализация прикладного кода выполняется поэтапно после фиксации архитектуры и контрактов.
+Следующий отдельный этап после этого состояния: доработка и расширение пользовательской документации, затем чистая локальная приемка перед merge в `dev`.
 
-## Структура репозитория
+## Repository Layout
 
-- `Frontend/` — клиентское React-приложение
-- `Backend/` — HTTP API на Node.js + Express.js
-- `DevOps/` — docker-compose, reverse proxy и дальнейшие deployment-артефакты
-- `docs/` — архитектурные и миграционные документы
+- `Frontend/` — React SPA
+- `Backend/` — Express API и MongoDB migrations
+- `DevOps/` — reverse proxy и deployment-oriented конфиги
+- `docs/` — архитектура, план миграции и reverse/parity runbooks
 
-## Документы
+## Runtime Architecture
+
+```mermaid
+flowchart LR
+    Browser["Browser"] --> Proxy["Nginx reverse proxy :8080"]
+    Proxy --> Frontend["Frontend container :80"]
+    Proxy --> Backend["Backend container :3001"]
+    Backend --> Mongo["MongoDB :27017"]
+```
+
+Ключевые правила текущего runtime:
+- пользовательская проверка идет через `reverse-proxy`, а не через разрозненные host-порты сервисов;
+- `frontend` ходит в backend через `/api`;
+- обычный startup backend не должен делать destructive reset базы;
+- reset базы допустим только через явный `npm run seed`.
+
+## Main Documents
 
 - `docs/architecture.md` — целевая архитектура и API-контракты
-- `docs/migration-plan.md` — порядок реализации, риски и зависимости
-- `docs/frontend-parity-runbook.md` — локальный сценарий проверки frontend parity для post edit/delete
-- `docs/reverse-tests/README.md` — каталог reverse/parity-тестов и история ревизий
-- `docs/reverse-tests/test-cases.md` — базовая матрица reverse-тестов для повторных прогонов
-- `docs/reverse-tests/revisions/2026-03-11-reverse-test-01.md` — первая датированная ревизия reverse-тестирования
-- `docs/reverse-tests/revisions/2026-03-11-reverse-test-02.md` — повторная ревизия после закрытия baseline parity-gap
-- `docs/reverse-tests/revisions/2026-03-11-reverse-test-03.md` — post-merge runtime re-check по deep links и backend ACL
-- `docs/reverse-tests/revisions/2026-03-11-reverse-test-04.md` — targeted UI regression fix для post HTML rendering/edit prefill
-- `docs/reverse-tests/revisions/2026-03-11-reverse-test-05.md` — automated regression coverage для post HTML rendering/edit prefill
-- `docs/reverse-tests/revisions/2026-03-11-reverse-test-06.md` — automated ACL/UI guard coverage для protected frontend screens
-- `docs/reverse-tests/revisions/2026-03-11-reverse-test-07.md` — docker-compose + nginx reverse proxy smoke с migration-style Mongo bootstrap
+- `docs/migration-plan.md` — этапы миграции, зависимости и риски
+- `docs/frontend-parity-runbook.md` — локальный parity-runbook по frontend сценариям
+- `docs/reverse-tests/README.md` — структура reverse/parity-проверок
+- `docs/reverse-tests/test-cases.md` — стабильная матрица ручных проверок
+- `docs/reverse-tests/revisions/2026-03-11-reverse-test-07.md` — compose/proxy smoke после migration-style bootstrap
 
-## Ближайшие этапы
+## Compose Startup
 
-1. Закрыть полноценный browser e2e smoke поверх уже подтвержденного live runtime parity.
-2. Подготовить backend BFF adapter layer отдельным этапом.
-3. После этого перейти к docker-compose и DevOps-контуру.
+Основной локальный вход для full-stack проверки:
 
-## Backend seed
+```bash
+cp .env.example .env
+docker compose up --build -d
+docker compose ps
+```
 
-Для локальной backend-проверки seed создает:
-- роли `admin/moder/reader/guest`;
-- demo-пользователей:
-- `admin` / `Admin#123`
-- `moder` / `Moder#123`
-- `reader` / `Reader#123`
-- baseline posts для guest/list/post сценариев;
-- baseline comments для comment/moderation smoke-check.
+После запуска приложение должно быть доступно через [http://localhost:8080](http://localhost:8080).
 
-Если нужен большой Mongo baseline из reference-проекта `author-blog`, используйте:
-- `cd Backend && MONGO_URI=mongodb://127.0.0.1:27017/fullstack-blog-coursework-2 npm run seed:reference`
-- импорт сохраняет локальный smoke-доступ `admin / Admin#123`, `moder / Moder#123`, `reader / Reader#123`;
-- импорт подтягивает `author-blog/db.json` в Mongo и дополнительно сохраняет smoke-аккаунты `moder` / `reader` для текущих локальных проверок;
-- после импорта в БД получается расширенный набор: `15` reference users + `2` smoke users, `31` posts и `383` comments.
-
-## Docker Compose
-
-Full-stack стек поднимается одной командой:
-
-1. Подготовьте env:
-   `cp .env.example .env`
-2. Запустите стек:
-   `docker compose up --build -d`
-3. Откройте приложение через reverse proxy:
-   `http://localhost:8080`
-
-Сервисы внутри compose:
+Сервисы стека:
 - `mongo`
 - `backend`
 - `frontend`
 - `reverse-proxy`
 
-Backend в compose запускает migration-style bootstrap:
-- `npm run migrate` — последовательный прогон Mongo migrations;
-- `npm run start:compose` — migrations + server startup;
-- `npm run seed` — явный reset БД и повторный прогон миграций.
+Что делает backend в compose:
+- `npm run migrate` — повторяемо применяет Mongo migrations;
+- `npm run start:compose` — сначала миграции, затем API runtime;
+- `npm run seed` — отдельная ручная операция для reset + повторного bootstrap.
 
-Для быстрой проверки после подъёма:
-- `docker compose ps`
-- `curl -I http://127.0.0.1:8080/`
-- `curl -I http://127.0.0.1:8080/api/health`
-- `curl -I http://127.0.0.1:8080/users`
-- `curl -I http://127.0.0.1:8080/post`
+## Smoke Check
 
-## Frontend Stage 1
+Минимальный smoke после подъема compose:
 
-Ветка `feature/frontend-migration-stage-1` приносит первый перенос клиента в каталог `Frontend/`.
-На этом этапе подключены:
-- регистрация;
-- логин;
-- восстановление сессии через JWT + `/api/auth/me`;
-- роли на клиенте;
-- список постов;
-- просмотр страницы поста;
-- создание поста;
-- update/delete post API на backend;
-- комментарии create/delete;
-- страница пользователей для admin.
+```bash
+curl -s -I http://127.0.0.1:8080/
+curl -s -I http://127.0.0.1:8080/api/health
+curl -s -I http://127.0.0.1:8080/users
+curl -s -I http://127.0.0.1:8080/post
+curl -s http://127.0.0.1:8080/api/posts
+```
 
-В этом этапе намеренно не делаются:
-- отдельные DTO/endpoints/FSD-слои;
-- BFF-адаптер;
-- compose/devops-обвязка.
+Ожидаемый результат:
+- `GET /` возвращает frontend shell;
+- `GET /api/health` возвращает `200`;
+- deep links `/users` и `/post` отдаются через SPA shell;
+- `GET /api/posts` возвращает baseline posts из MongoDB через proxy.
 
-## Локальный запуск
+## Local Non-Compose Run
 
-1. Поднимите MongoDB локально на `mongodb://127.0.0.1:27017/fullstack-blog-coursework-2`.
-2. Подготовьте backend env:
-   `cp Backend/.env.example Backend/.env`
-3. Запустите backend:
-   `cd Backend && npm install && npm run seed && npm run dev`
-4. Запустите frontend:
-   `cd Frontend && npm install && npm start`
+Если нужен раздельный локальный запуск без compose:
 
-Frontend ожидает backend API на `http://localhost:3001/api`, что соответствует `Backend/.env.example`.
+```bash
+cp Backend/.env.example Backend/.env
+cd Backend && npm install && npm run seed && npm run dev
+cd Frontend && npm install && npm start
+```
 
-## Backend posts smoke-check
+В этом режиме frontend ожидает backend API на `http://localhost:3001/api`.
 
-Минимальный ручной smoke для backend post lifecycle перед frontend parity-проверкой:
-- логин под `admin` / `Admin#123`
-- `POST /api/posts`
-- `PATCH /api/posts/:id`
-- `GET /api/posts/:id`
-- `DELETE /api/posts/:id`
-- повторный `GET /api/posts/:id` должен вернуть `404`
-- если перед удалением создан комментарий, после удаления поста связанный комментарий тоже должен исчезнуть вместе с постом
+## Demo Data and Seed
 
-## Reverse Testing
+Базовый seed создает:
+- роли `admin`, `moder`, `reader`, `guest`;
+- demo-аккаунты `admin / Admin#123`, `moder / Moder#123`, `reader / Reader#123`;
+- baseline posts для guest/list/post сценариев;
+- baseline comments для comment/moderation smoke-check.
 
-Reverse-тестирование ведётся в каталоге `docs/reverse-tests/`.
+Если нужен расширенный baseline из reference-проекта:
 
-- `test-cases.md` фиксирует стабильную матрицу проверок по ролям, API, UI и negative scenarios;
-- `revisions/` хранит датированные отчёты по каждому фактическому прогону;
-- baseline-ревизия для миграции: `2026-03-11-reverse-test-01.md`;
-- follow-up ревизия после фикса seed demo-state, `commentsCount` и error UX: `2026-03-11-reverse-test-02.md`.
-- post-merge ревизия по deep-link route serving и backend ACL: `2026-03-11-reverse-test-03.md`.
-- targeted UI regression fix по post HTML rendering/edit prefill: `2026-03-11-reverse-test-04.md`.
-- automated regression coverage по post HTML rendering/edit prefill: `2026-03-11-reverse-test-05.md`.
-- automated ACL/UI guard coverage по protected frontend screens: `2026-03-11-reverse-test-06.md`.
-- docker-compose + nginx reverse proxy smoke с migration-style Mongo bootstrap: `2026-03-11-reverse-test-07.md`.
+```bash
+cd Backend
+MONGO_URI=mongodb://127.0.0.1:27017/fullstack-blog-coursework-2 npm run seed:reference
+```
+
+Reference import:
+- тянет данные из `author-blog/db.json`;
+- сохраняет smoke-аккаунты для локальных проверок;
+- дает расширенный набор users/posts/comments поверх базового runtime smoke.
+
+## Regression and Reverse Testing
+
+Reverse-проверки ведутся в `docs/reverse-tests/`.
+
+На текущем этапе уже зафиксированы:
+- baseline parity against `author-blog`;
+- post-merge re-check по deep links и backend ACL;
+- regression coverage для post HTML rendering/edit flow;
+- regression coverage для protected frontend screens;
+- compose + nginx proxy smoke после migration-style Mongo bootstrap.
+
+Текущий быстрый regression-запуск:
+
+```bash
+cd Frontend
+CI=true npm test -- --runInBand --watch=false post-content.test.jsx post-form.test.jsx private-content.test.jsx users.test.jsx
+```
