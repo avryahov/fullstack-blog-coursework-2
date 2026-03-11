@@ -25,3 +25,4 @@
 
 - `2026-03-11-reverse-test-01.md` — первый baseline reverse-test для fullstack parity against `author-blog`
 - `2026-03-11-reverse-test-02.md` — повторный reverse-test после фикса seed demo-state, `commentsCount` и error UX
+- `2026-03-11-reverse-test-03.md` — post-merge runtime re-check по frontend deep links и backend ACL
