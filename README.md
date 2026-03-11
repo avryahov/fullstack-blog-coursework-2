@@ -27,6 +27,7 @@
 - `docs/reverse-tests/README.md` — каталог reverse/parity-тестов и история ревизий
 - `docs/reverse-tests/test-cases.md` — базовая матрица reverse-тестов для повторных прогонов
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-01.md` — первая датированная ревизия reverse-тестирования
+- `docs/reverse-tests/revisions/2026-03-11-reverse-test-02.md` — повторная ревизия после закрытия baseline parity-gap
 
 ## Ближайшие этапы
 
@@ -37,10 +38,14 @@
 
 ## Backend seed
 
-Для локальной backend-проверки seed создает роли и demo-пользователей:
+Для локальной backend-проверки seed создает:
+- роли `admin/moder/reader/guest`;
+- demo-пользователей:
 - `admin` / `Admin#123`
 - `moder` / `Moder#123`
 - `reader` / `Reader#123`
+- baseline posts для guest/list/post сценариев;
+- baseline comments для comment/moderation smoke-check.
 
 ## Frontend Stage 1
 
@@ -91,4 +96,5 @@ Reverse-тестирование ведётся в каталоге `docs/revers
 
 - `test-cases.md` фиксирует стабильную матрицу проверок по ролям, API, UI и negative scenarios;
 - `revisions/` хранит датированные отчёты по каждому фактическому прогону;
-- первая baseline-ревизия для миграции: `2026-03-11-reverse-test-01.md`.
+- baseline-ревизия для миграции: `2026-03-11-reverse-test-01.md`;
+- follow-up ревизия после фикса seed demo-state, `commentsCount` и error UX: `2026-03-11-reverse-test-02.md`.

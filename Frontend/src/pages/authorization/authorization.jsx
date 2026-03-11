@@ -47,7 +47,7 @@ export const Authorization = () => {
   const onSubmit = ({ login, password }) => {
     authApi.authorize(login, password).then(({ res, error }) => {
       if (error) {
-        setServerError('Ошибка запроса:' + error);
+        setServerError(error);
 
         return;
       }

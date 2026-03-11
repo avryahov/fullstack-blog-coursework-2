@@ -51,7 +51,7 @@ export const Registration = () => {
   const onSubmit = ({ login, password }) => {
     authApi.register(login, password).then(({ res, error }) => {
       if (error) {
-        setServerError('Ошибка запроса:' + error);
+        setServerError(error);
 
         return;
       }

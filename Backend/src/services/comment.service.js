@@ -1,4 +1,5 @@
 import { Comment, Post } from '../models/index.js';
+import { ERROR_MESSAGES, createHttpError } from '../utils/http-error.js';
 
 const toCommentResponse = comment => ({
   id: comment.id,
@@ -13,9 +14,7 @@ export const createPostComment = async ({ postId, authorId, content }) => {
   const post = await Post.findById(postId);
 
   if (!post) {
-    const error = new Error('Post not found');
-    error.statusCode = 404;
-    throw error;
+    throw createHttpError(404, ERROR_MESSAGES.POST_NOT_FOUND);
   }
 
   const comment = await Comment.create({
@@ -34,8 +33,6 @@ export const deleteCommentById = async commentId => {
   const deletedComment = await Comment.findByIdAndDelete(commentId);
 
   if (!deletedComment) {
-    const error = new Error('Comment not found');
-    error.statusCode = 404;
-    throw error;
+    throw createHttpError(404, ERROR_MESSAGES.COMMENT_NOT_FOUND);
   }
 };

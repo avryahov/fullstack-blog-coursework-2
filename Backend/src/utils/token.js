@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { readServerEnv } from '../config/env.js';
+import { ERROR_MESSAGES, createHttpError } from './http-error.js';
 
 const getJwtSecret = () => readServerEnv().jwtSecret;
 
@@ -13,8 +14,6 @@ export const verifyToken = token => {
   try {
     return jwt.verify(token, getJwtSecret());
   } catch {
-    const error = new Error('Authentication required');
-    error.statusCode = 401;
-    throw error;
+    throw createHttpError(401, ERROR_MESSAGES.AUTH_REQUIRED);
   }
 };

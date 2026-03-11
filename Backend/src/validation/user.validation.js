@@ -1,10 +1,9 @@
 import mongoose from 'mongoose';
+import { ERROR_MESSAGES, createHttpError } from '../utils/http-error.js';
 
 export const validateUserIdParam = (req, _res, next) => {
   if (!mongoose.isValidObjectId(req.params?.id)) {
-    const error = new Error('User id is invalid');
-    error.statusCode = 400;
-    return next(error);
+    return next(createHttpError(400, ERROR_MESSAGES.USER_ID_INVALID));
   }
 
   return next();
@@ -14,15 +13,11 @@ export const validateUserRoleBody = (req, _res, next) => {
   const roleId = typeof req.body?.roleId === 'string' ? req.body.roleId.trim() : '';
 
   if (!roleId) {
-    const error = new Error('roleId is required');
-    error.statusCode = 400;
-    return next(error);
+    return next(createHttpError(400, ERROR_MESSAGES.ROLE_ID_REQUIRED));
   }
 
   if (!mongoose.isValidObjectId(roleId)) {
-    const error = new Error('roleId is invalid');
-    error.statusCode = 400;
-    return next(error);
+    return next(createHttpError(400, ERROR_MESSAGES.ROLE_ID_INVALID));
   }
 
   return next();

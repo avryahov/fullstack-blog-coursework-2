@@ -1,4 +1,5 @@
 import { Comment, User } from '../models/index.js';
+import { ERROR_MESSAGES, createHttpError } from '../utils/http-error.js';
 import { findRoleById, findRoleByKey } from './role.service.js';
 
 const userPopulate = {
@@ -59,9 +60,7 @@ const ensureNotLastAdmin = async user => {
   const adminCount = await User.countDocuments({ roleId: adminRole.id });
 
   if (adminCount <= 1) {
-    const error = new Error('At least one admin user must remain');
-    error.statusCode = 409;
-    throw error;
+    throw createHttpError(409, ERROR_MESSAGES.LAST_ADMIN_REQUIRED);
   }
 };
 
@@ -69,15 +68,11 @@ export const updateUserRoleById = async ({ userId, roleId }) => {
   const [user, nextRole] = await Promise.all([User.findById(userId).populate(userPopulate), findRoleById(roleId)]);
 
   if (!user) {
-    const error = new Error('User not found');
-    error.statusCode = 404;
-    throw error;
+    throw createHttpError(404, ERROR_MESSAGES.USER_NOT_FOUND);
   }
 
   if (!nextRole) {
-    const error = new Error('Role not found');
-    error.statusCode = 404;
-    throw error;
+    throw createHttpError(404, ERROR_MESSAGES.ROLE_NOT_FOUND);
   }
 
   if (user.roleId?.id === nextRole.id) {
@@ -98,9 +93,7 @@ export const deleteUserById = async userId => {
   const user = await User.findById(userId).populate(userPopulate);
 
   if (!user) {
-    const error = new Error('User not found');
-    error.statusCode = 404;
-    throw error;
+    throw createHttpError(404, ERROR_MESSAGES.USER_NOT_FOUND);
   }
 
   await ensureNotLastAdmin(user);
