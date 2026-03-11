@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { postsApi } from '../../api';
 import { Error } from '../../components';
 import { PAGINATION_LIMIT } from '../../constant';
-import { useServerRequest } from '../../hooks';
 import { Pagination, PostCard, Search } from './components';
 import { debounce } from './utils';
 
@@ -13,10 +13,9 @@ export const Main = () => {
   const [lastPage, setLastPage] = useState(1);
   const [searchPhrase, setSearchPhrase] = useState('');
   const [shouldSearch, setShouldSearch] = useState(false);
-  const requestServer = useServerRequest();
 
   useEffect(() => {
-    requestServer('fetchPosts', searchPhrase, page, PAGINATION_LIMIT).then(({ res, error }) => {
+    postsApi.fetchPosts(searchPhrase, page, PAGINATION_LIMIT).then(({ res, error }) => {
       if (error) {
         setErrorMessage(error);
         setPosts([]);
@@ -28,7 +27,7 @@ export const Main = () => {
       setPosts(res.posts);
       setLastPage(Number(res.count));
     });
-  }, [requestServer, page, shouldSearch, searchPhrase]);
+  }, [page, shouldSearch, searchPhrase]);
 
   const debouncedSearch = useMemo(() => debounce(setShouldSearch, 2000), []);
 

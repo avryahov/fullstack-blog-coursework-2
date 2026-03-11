@@ -3,22 +3,24 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { addCommentAsync } from '../../../../actions';
+import { commentsApi } from '../../../../api';
+import { addCommentAsync, selectUserSession } from '../../../../actions';
 import { Icon } from '../../../../components/header/components';
 import { PROP_TYPE, ROLE } from '../../../../constant';
-import { useServerRequest } from '../../../../hooks';
 import { selectUserRole } from '../../../../selectors';
 import { Comment } from './components';
 
 export const Comments = ({ comments, postId }) => {
   const [newComment, setNewComment] = useState('');
   const dispatch = useDispatch();
-  const requestServer = useServerRequest();
+  const session = useSelector(selectUserSession);
   const userRole = useSelector(selectUserRole);
 
   const onNewCommentAdd = (selectedPostId, content) => {
     if (content) {
-      dispatch(addCommentAsync(requestServer, selectedPostId, content));
+      const addComment = (currentPostId, nextContent) => commentsApi.addComment(session, currentPostId, nextContent);
+
+      dispatch(addCommentAsync(addComment, selectedPostId, content));
       setNewComment('');
     }
   };

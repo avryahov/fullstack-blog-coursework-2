@@ -3,21 +3,22 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
 import { useState } from 'react';
-import { useServerRequest } from '../../../../hooks';
+import { useSelector } from 'react-redux';
+import { usersApi } from '../../../../api';
+import { selectUserSession } from '../../../../actions';
 import { PROP_TYPE } from '../../../../constant';
 
 /* eslint-disable react/prop-types */
 export const UserRow = ({ login, id, registeredAt, roleId: userRoleId, rolesList, onUserRemove, onRoleChangeError }) => {
   const [selectedtRoleId, setSelectedRoleId] = useState(userRoleId);
   const [initialRoleId, setInitialRoleid] = useState(userRoleId);
-
-  const requestServer = useServerRequest();
+  const session = useSelector(selectUserSession);
   const onRoleChange = ({ target }) => {
     setSelectedRoleId(target.value);
   };
 
   const onRoleSave = (userId, newUserRoleId) => {
-    requestServer('updateUserRole', userId, newUserRoleId).then(({ error }) => {
+    usersApi.updateUserRole(session, userId, newUserRoleId).then(({ error }) => {
       if (error) {
         onRoleChangeError(error);
         setSelectedRoleId(initialRoleId);

@@ -2,23 +2,26 @@
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { CLOSE_MODAL, openModal, removeCommentAsync } from '../../../../../../actions';
+import { commentsApi } from '../../../../../../api';
+import { CLOSE_MODAL, openModal, removeCommentAsync, selectUserSession } from '../../../../../../actions';
 import { Icon } from '../../../../../../components/header/components';
 import { ROLE } from '../../../../../../constant';
-import { useServerRequest } from '../../../../../../hooks';
 import { selectUserRole } from '../../../../../../selectors';
 
 export const Comment = ({ id, author, postId, content, publishedAt }) => {
   const dispatch = useDispatch();
-  const requestServer = useServerRequest();
+  const session = useSelector(selectUserSession);
   const userRole = useSelector(selectUserRole);
 
   const onCommentDelete = commentId => {
+    const removeComment = (selectedPostId, selectedCommentId) =>
+      commentsApi.removePostComment(session, selectedPostId, selectedCommentId);
+
     dispatch(
       openModal({
         text: 'Удалить комментарий?',
         onConfirm: () => {
-          dispatch(removeCommentAsync(requestServer, postId, commentId));
+          dispatch(removeCommentAsync(removeComment, postId, commentId));
           dispatch(CLOSE_MODAL);
         },
         onCancel: () => dispatch(CLOSE_MODAL),
