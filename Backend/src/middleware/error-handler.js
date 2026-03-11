@@ -1,7 +1,9 @@
+import { ERROR_MESSAGES } from '../utils/http-error.js';
+
 export const errorHandler = (error, _req, res, _next) => {
   if (error.name === 'CastError') {
     return res.status(400).json({
-      error: 'Invalid identifier',
+      error: ERROR_MESSAGES.INVALID_IDENTIFIER,
     });
   }
 
@@ -10,6 +12,6 @@ export const errorHandler = (error, _req, res, _next) => {
   }
 
   res.status(error.statusCode || 500).json({
-    error: error.message || 'Internal server error',
+    error: error.message || ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
   });
 };

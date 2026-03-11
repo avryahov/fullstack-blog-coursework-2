@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { Role } from '../models/index.js';
+import { ERROR_MESSAGES, createHttpError } from '../utils/http-error.js';
 import { createUser, findUserByLogin, toPublicUser } from './user.service.js';
 import { signToken } from '../utils/token.js';
 
@@ -12,17 +13,13 @@ export const registerUser = async ({ login, password }) => {
   const existingUser = await findUserByLogin(login);
 
   if (existingUser) {
-    const error = new Error('Login already exists');
-    error.statusCode = 409;
-    throw error;
+    throw createHttpError(409, ERROR_MESSAGES.LOGIN_ALREADY_EXISTS);
   }
 
   const readerRole = await Role.findOne({ key: 'reader' });
 
   if (!readerRole) {
-    const error = new Error('Reader role is not initialized');
-    error.statusCode = 500;
-    throw error;
+    throw createHttpError(500, ERROR_MESSAGES.READER_ROLE_NOT_INITIALIZED);
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
@@ -42,17 +39,13 @@ export const loginUser = async ({ login, password }) => {
   const user = await findUserByLogin(login, { includePasswordHash: true });
 
   if (!user) {
-    const error = new Error('Invalid login or password');
-    error.statusCode = 401;
-    throw error;
+    throw createHttpError(401, ERROR_MESSAGES.INVALID_LOGIN_OR_PASSWORD);
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
   if (!isPasswordValid) {
-    const error = new Error('Invalid login or password');
-    error.statusCode = 401;
-    throw error;
+    throw createHttpError(401, ERROR_MESSAGES.INVALID_LOGIN_OR_PASSWORD);
   }
 
   return buildAuthResponse(user);

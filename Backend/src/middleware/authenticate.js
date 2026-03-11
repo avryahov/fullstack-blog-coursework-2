@@ -1,4 +1,5 @@
 import { findUserById } from '../services/user.service.js';
+import { ERROR_MESSAGES, createHttpError } from '../utils/http-error.js';
 import { verifyToken } from '../utils/token.js';
 
 export const authenticate = async (req, _res, next) => {
@@ -7,18 +8,14 @@ export const authenticate = async (req, _res, next) => {
     const [scheme, token] = authorizationHeader.split(' ');
 
     if (scheme !== 'Bearer' || !token) {
-      const error = new Error('Authentication required');
-      error.statusCode = 401;
-      throw error;
+      throw createHttpError(401, ERROR_MESSAGES.AUTH_REQUIRED);
     }
 
     const payload = verifyToken(token);
     const user = await findUserById(payload.userId);
 
     if (!user) {
-      const error = new Error('Authentication required');
-      error.statusCode = 401;
-      throw error;
+      throw createHttpError(401, ERROR_MESSAGES.AUTH_REQUIRED);
     }
 
     req.user = user;

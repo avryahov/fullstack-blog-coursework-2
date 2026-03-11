@@ -8,6 +8,8 @@ export const endpoints = {
     list: '/posts',
     byId: postId => `/posts/${postId}`,
     comments: postId => `/posts/${postId}/comments`,
+    update: postId => `/posts/${postId}`,
+    remove: postId => `/posts/${postId}`,
   },
   comments: {
     byId: commentId => `/comments/${commentId}`,

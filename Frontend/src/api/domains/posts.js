@@ -49,10 +49,29 @@ export const postsApi = {
   },
   savePost: async (token, newPostData) => {
     if (newPostData.id) {
-      return {
-        res: null,
-        error: 'Редактирование постов будет сделано на следующем этапе',
-      };
+      try {
+        const {
+          data: { post },
+        } = await apiClient.patch(
+          endpoints.posts.update(newPostData.id),
+          {
+            title: newPostData.title,
+            imageUrl: newPostData.imageUrl,
+            content: newPostData.content,
+          },
+          createAuthorizedConfig(token)
+        );
+
+        return {
+          res: mapPost(post),
+          error: null,
+        };
+      } catch (error) {
+        return {
+          res: null,
+          error: getErrorMessage(error),
+        };
+      }
     }
 
     try {
@@ -70,6 +89,21 @@ export const postsApi = {
 
       return {
         res: mapPost(post),
+        error: null,
+      };
+    } catch (error) {
+      return {
+        res: null,
+        error: getErrorMessage(error),
+      };
+    }
+  },
+  removePost: async (token, postId) => {
+    try {
+      await apiClient.delete(endpoints.posts.remove(postId), createAuthorizedConfig(token));
+
+      return {
+        res: null,
         error: null,
       };
     } catch (error) {

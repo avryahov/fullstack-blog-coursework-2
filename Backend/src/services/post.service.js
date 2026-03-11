@@ -1,10 +1,12 @@
 import { Comment, Post } from '../models/index.js';
+import { ERROR_MESSAGES, createHttpError } from '../utils/http-error.js';
 
 const toPostListItem = post => ({
   id: post.id,
   title: post.title,
   imageUrl: post.imageUrl,
   publishedAt: post.publishedAt,
+  commentsCount: post.commentsCount ?? 0,
 });
 
 const toPostDetail = post => ({
@@ -42,9 +44,38 @@ export const getPostsList = async ({ page, limit, search }) => {
     Post.find(query).sort({ publishedAt: -1 }).skip(skip).limit(safeLimit),
     Post.countDocuments(query),
   ]);
+  const postIds = posts.map(post => post._id);
+  const commentsByPostId =
+    postIds.length === 0
+      ? new Map()
+      : new Map(
+          (
+            await Comment.aggregate([
+              {
+                $match: {
+                  postId: {
+                    $in: postIds,
+                  },
+                },
+              },
+              {
+                $group: {
+                  _id: '$postId',
+                  commentsCount: { $sum: 1 },
+                },
+              },
+            ])
+          ).map(({ _id, commentsCount }) => [_id.toString(), commentsCount])
+        );
 
   return {
-    posts: posts.map(toPostListItem),
+    posts: posts.map(post =>
+      toPostListItem({
+        ...post.toObject(),
+        id: post.id,
+        commentsCount: commentsByPostId.get(post._id.toString()) ?? 0,
+      })
+    ),
     pagination: {
       page: safePage,
       limit: safeLimit,
@@ -85,9 +116,7 @@ export const updatePostById = async (postId, { title, imageUrl, content }) => {
   );
 
   if (!post) {
-    const error = new Error('Post not found');
-    error.statusCode = 404;
-    throw error;
+    throw createHttpError(404, ERROR_MESSAGES.POST_NOT_FOUND);
   }
 
   const comments = await Comment.find({ postId }).populate({ path: 'authorId', select: 'login' }).sort({ publishedAt: 1 });
@@ -102,9 +131,7 @@ export const deletePostById = async postId => {
   const post = await Post.findByIdAndDelete(postId);
 
   if (!post) {
-    const error = new Error('Post not found');
-    error.statusCode = 404;
-    throw error;
+    throw createHttpError(404, ERROR_MESSAGES.POST_NOT_FOUND);
   }
 
   await Comment.deleteMany({ postId });
@@ -117,9 +144,7 @@ export const getPostById = async postId => {
   ]);
 
   if (!post) {
-    const error = new Error('Post not found');
-    error.statusCode = 404;
-    throw error;
+    throw createHttpError(404, ERROR_MESSAGES.POST_NOT_FOUND);
   }
 
   return {
