@@ -30,7 +30,7 @@ curl -s http://127.0.0.1:8080/api/docs/
 curl -s -I http://127.0.0.1:8080/
 curl -s -I http://127.0.0.1:8080/users
 curl -s http://127.0.0.1:8080/api/posts
-curl -s -X POST http://127.0.0.1:8080/api/auth/login -H 'Content-Type: application/json' -d '{"login":"admin","password":"Admin#123"}'
+curl -s -X POST http://127.0.0.1:8080/api/auth/login -H 'Content-Type: application/json' -d '{"login":"admin","password":"admin123"}'
 ```
 
 ## Что реально проверено
