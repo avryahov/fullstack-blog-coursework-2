@@ -86,6 +86,7 @@ Backend/
     ├── controllers/
     ├── middleware/
     ├── models/
+    ├── openapi/
     ├── routes/
     ├── services/
     ├── validation/
@@ -106,6 +107,20 @@ Backend/
 - поиск и пагинация постов;
 - обработка ошибок;
 - нормализация и валидация входных данных.
+- публикация OpenAPI spec и Swagger UI для фактического runtime API.
+
+### OpenAPI/Swagger
+
+OpenAPI-слой живет в `Backend/src/openapi/` и подключается на уровне `create-app`.
+
+Маршруты документации:
+- `GET /api/openapi.json` — machine-readable OpenAPI 3.0 spec;
+- `GET /api/docs` — Swagger UI.
+
+Требование локального runtime:
+- документация должна быть доступна через единый proxy-вход `http://localhost:8080/api/...`;
+- backend-код является source of truth для DTO, ACL и error responses;
+- spec должна описывать только реально существующие endpoints и ограничения.
 
 ### Auth strategy
 
@@ -258,6 +273,16 @@ Backend/
 - `DELETE /api/users/:id`
   удаление пользователя, только `admin`
 - `GET /api/roles`
+  список ролей, только `admin`
+
+### Документирование API
+
+Swagger/OpenAPI должен покрывать:
+- `auth`, `posts`, `comments`, `users`, `roles`, `health`;
+- request/response DTO;
+- JWT bearer auth scheme;
+- коды ответов `400`, `401`, `403`, `404`, `409`, `500`, где они реально возникают;
+- role-based ограничения доступа для защищенных операций.
   список ролей, только `admin`
 
 Текущее состояние в коде:

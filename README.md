@@ -7,6 +7,7 @@
 На 2026-03-11 в репозитории уже собраны и локально проверены:
 - `Frontend/` с API-вызовами через proxy-friendly base URL;
 - `Backend/` с auth, posts, comments, users и roles endpoints;
+- Swagger/OpenAPI слой для backend c `openapi.json` и Swagger UI через reverse proxy;
 - migration-style bootstrap для MongoDB с журналом прогонов;
 - full-stack compose-контур `mongo + backend + frontend + reverse-proxy`;
 - smoke-проверка runtime через `http://localhost:8080`;
@@ -46,6 +47,17 @@ flowchart LR
 - `docs/reverse-tests/test-cases.md` — стабильная матрица ручных проверок
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-08.md` — полный reverse regression run после clean compose restart
 
+## API Documentation
+
+Backend публикует OpenAPI-документацию в двух видах:
+- raw spec: [http://localhost:8080/api/openapi.json](http://localhost:8080/api/openapi.json)
+- Swagger UI: [http://localhost:8080/api/docs](http://localhost:8080/api/docs)
+
+Важно:
+- основной пользовательский вход для проверки документации идет через reverse proxy на `:8080`;
+- backend также отдает те же маршруты напрямую на своем внутреннем runtime, но это не считается основным сценарием локальной приемки;
+- спецификация описывает фактические backend endpoints, DTO, auth scheme, коды ответов и role-based ограничения доступа.
+
 ## Compose Startup
 
 Основной локальный вход для full-stack проверки:
@@ -76,6 +88,8 @@ docker compose ps
 ```bash
 curl -s -I http://127.0.0.1:8080/
 curl -s -I http://127.0.0.1:8080/api/health
+curl -s http://127.0.0.1:8080/api/openapi.json | head -c 120
+curl -s -I http://127.0.0.1:8080/api/docs
 curl -s -I http://127.0.0.1:8080/users
 curl -s -I http://127.0.0.1:8080/post
 curl -s http://127.0.0.1:8080/api/posts
@@ -84,6 +98,8 @@ curl -s http://127.0.0.1:8080/api/posts
 Ожидаемый результат:
 - `GET /` возвращает frontend shell;
 - `GET /api/health` возвращает `200`;
+- `GET /api/openapi.json` возвращает OpenAPI JSON через proxy;
+- `GET /api/docs` возвращает Swagger UI через proxy;
 - deep links `/users` и `/post` отдаются через SPA shell;
 - `GET /api/posts` возвращает baseline posts из MongoDB через proxy.
 
