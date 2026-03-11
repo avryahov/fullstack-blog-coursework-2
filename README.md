@@ -32,6 +32,7 @@
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-04.md` — targeted UI regression fix для post HTML rendering/edit prefill
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-05.md` — automated regression coverage для post HTML rendering/edit prefill
 - `docs/reverse-tests/revisions/2026-03-11-reverse-test-06.md` — automated ACL/UI guard coverage для protected frontend screens
+- `docs/reverse-tests/revisions/2026-03-11-reverse-test-07.md` — docker-compose + nginx reverse proxy smoke с migration-style Mongo bootstrap
 
 ## Ближайшие этапы
 
@@ -55,6 +56,35 @@
 - импорт сохраняет локальный smoke-доступ `admin / Admin#123`, `moder / Moder#123`, `reader / Reader#123`;
 - импорт подтягивает `author-blog/db.json` в Mongo и дополнительно сохраняет smoke-аккаунты `moder` / `reader` для текущих локальных проверок;
 - после импорта в БД получается расширенный набор: `15` reference users + `2` smoke users, `31` posts и `383` comments.
+
+## Docker Compose
+
+Full-stack стек поднимается одной командой:
+
+1. Подготовьте env:
+   `cp .env.example .env`
+2. Запустите стек:
+   `docker compose up --build -d`
+3. Откройте приложение через reverse proxy:
+   `http://localhost:8080`
+
+Сервисы внутри compose:
+- `mongo`
+- `backend`
+- `frontend`
+- `reverse-proxy`
+
+Backend в compose запускает migration-style bootstrap:
+- `npm run migrate` — последовательный прогон Mongo migrations;
+- `npm run start:compose` — migrations + server startup;
+- `npm run seed` — явный reset БД и повторный прогон миграций.
+
+Для быстрой проверки после подъёма:
+- `docker compose ps`
+- `curl -I http://127.0.0.1:8080/`
+- `curl -I http://127.0.0.1:8080/api/health`
+- `curl -I http://127.0.0.1:8080/users`
+- `curl -I http://127.0.0.1:8080/post`
 
 ## Frontend Stage 1
 
@@ -111,3 +141,4 @@ Reverse-тестирование ведётся в каталоге `docs/revers
 - targeted UI regression fix по post HTML rendering/edit prefill: `2026-03-11-reverse-test-04.md`.
 - automated regression coverage по post HTML rendering/edit prefill: `2026-03-11-reverse-test-05.md`.
 - automated ACL/UI guard coverage по protected frontend screens: `2026-03-11-reverse-test-06.md`.
+- docker-compose + nginx reverse proxy smoke с migration-style Mongo bootstrap: `2026-03-11-reverse-test-07.md`.

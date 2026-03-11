@@ -29,3 +29,4 @@
 - `2026-03-11-reverse-test-04.md` — targeted UI regression fix для post HTML rendering/edit prefill
 - `2026-03-11-reverse-test-05.md` — automated regression coverage для post HTML rendering/edit prefill
 - `2026-03-11-reverse-test-06.md` — automated ACL/UI guard coverage для protected frontend screens
+- `2026-03-11-reverse-test-07.md` — docker-compose + nginx reverse proxy smoke с migration-style Mongo bootstrap
