@@ -38,6 +38,20 @@ temp/
 *.pid
 *.pid.lock
 
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+!DevOps/Terraform/terraform.tfvars
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
 # IDE and OS
 .DS_Store
 .idea/
