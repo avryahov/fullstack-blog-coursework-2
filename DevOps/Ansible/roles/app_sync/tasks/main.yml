@@ -1,2 +1,36 @@
 ---
-# Project layout delivery tasks will be added in the next implementation step.
+- name: Allocate local archive path for deploy bundle
+  ansible.builtin.tempfile:
+    state: file
+    suffix: .tar
+  delegate_to: localhost
+  become: false
+  run_once: true
+  register: app_sync_archive
+
+- name: Build deploy archive from tracked files
+  ansible.builtin.command: >-
+    git -C "{{ playbook_dir }}/../../.." archive --format=tar
+    -o "{{ app_sync_archive.path }}"
+    HEAD docker-compose.yml Backend Frontend DevOps/nginx
+  delegate_to: localhost
+  become: false
+  run_once: true
+  changed_when: true
+
+- name: Extract deploy archive on remote host
+  ansible.builtin.unarchive:
+    src: "{{ app_sync_archive.path }}"
+    dest: "{{ deploy_path }}"
+    owner: "{{ deploy_owner }}"
+    group: "{{ deploy_group }}"
+    remote_src: false
+
+- name: Remove local deploy archive
+  ansible.builtin.file:
+    path: "{{ app_sync_archive.path }}"
+    state: absent
+  delegate_to: localhost
+  become: false
+  run_once: true
+  changed_when: false

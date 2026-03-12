@@ -7,6 +7,7 @@ compose_project_name: fullstack-blog-coursework-2
 
 proxy_public_port: 80
 proxy_container_port: 80
+mongo_container_port: 27017
 backend_container_port: 3001
 frontend_api_url: /api
 
@@ -16,12 +17,19 @@ mongo_root_password: "{{ lookup('ansible.builtin.env', 'FULLSTACK_BLOG_MONGO_ROO
 
 server_name: "{{ inventory_hostname }}"
 server_public_ip: "{{ ansible_host }}"
-backend_client_origin: "http://{{ ansible_host }}"
+backend_client_origin: >-
+  http://{{ ansible_host }}{{ '' if (proxy_public_port | int) == 80 else ':' ~ (proxy_public_port | string) }}
 backend_jwt_secret: "{{ lookup('ansible.builtin.env', 'FULLSTACK_BLOG_BACKEND_JWT_SECRET') }}"
 
 deploy_owner: root
 deploy_group: root
 deploy_directory_mode: "0755"
+
+app_sync_include_patterns:
+  - docker-compose.yml
+  - Backend/
+  - Frontend/
+  - DevOps/nginx/
 
 smoke_check_endpoints:
   - /
