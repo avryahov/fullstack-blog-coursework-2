@@ -1,0 +1,9 @@
+server_name          = "fullstack-blog-vps"
+region_slug          = "openstack-msk1"
+image_slug           = "ubuntu-24-04-amd64-docker"
+server_size_slug     = "c1-m1-d10-hp"
+ssh_key_fingerprint  = "fe:e9:57:46:8a:59:4c:15:11:be:00:48:46:f8:0f:7b"
+ssh_private_key_path = "~/.ssh/fullstack-blog-vps"
+ssh_user             = "root"
+enable_backups       = false
+isp_license_size     = null
