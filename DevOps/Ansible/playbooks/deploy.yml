@@ -1,0 +1,10 @@
+- name: Deploy application layout and compose stack
+  hosts: app_servers
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: app_directories
+    - role: app_sync
+    - role: app_config
+    - role: compose_stack
