@@ -1,0 +1,16 @@
+ansible_ssh_private_key_file: ~/.ssh/fullstack-blog-vps
+
+server_name: fullstack-blog-vps
+server_id: 6163121
+server_public_ip: 95.163.229.40
+server_region_slug: openstack-msk1
+server_image_slug: ubuntu-24-04-amd64
+server_size_slug: c4-m4-d80-base
+server_created_at: 2026-03-12 20:05:01
+ssh_key_fingerprint: fe:e9:57:46:8a:59:4c:15:11:be:00:48:46:f8:0f:7b
+
+backend_client_origin: http://95.163.229.40
+
+# Replace placeholders before real deploy runs.
+mongo_root_password: change-me
+backend_jwt_secret: change-me

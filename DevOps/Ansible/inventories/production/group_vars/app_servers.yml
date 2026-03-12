@@ -1,0 +1,29 @@
+project_name: fullstack-blog-coursework-2
+deploy_path: /opt/fullstack-blog-coursework-2
+
+compose_file_name: docker-compose.yml
+compose_env_file_name: .env
+compose_project_name: fullstack-blog-coursework-2
+
+proxy_public_port: 80
+proxy_container_port: 80
+backend_container_port: 3001
+frontend_api_url: /api
+
+mongo_database: fullstack-blog-coursework-2
+mongo_root_username: blog
+mongo_root_password: change-me
+
+backend_client_origin: http://95.163.229.40
+backend_jwt_secret: change-me
+
+deploy_owner: root
+deploy_group: root
+deploy_directory_mode: "0755"
+
+smoke_check_endpoints:
+  - /
+  - /api/health
+  - /api/openapi.json
+  - /api/docs
+  - /api/posts?limit=1
