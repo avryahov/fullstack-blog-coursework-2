@@ -44,7 +44,7 @@ temp/
 *.tfstate.*
 *.tfvars
 *.tfvars.json
-!DevOps/Terraform/terraform.tfvars
+!DevOps/Terraform/*.example
 crash.log
 crash.*.log
 override.tf
