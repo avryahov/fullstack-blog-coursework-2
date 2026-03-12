@@ -1,2 +1,8 @@
 ---
-# Deploy directory tasks will be added in the next implementation step.
+- name: Ensure deploy directory exists
+  ansible.builtin.file:
+    path: "{{ deploy_path }}"
+    state: directory
+    owner: "{{ deploy_owner }}"
+    group: "{{ deploy_group }}"
+    mode: "{{ deploy_directory_mode }}"

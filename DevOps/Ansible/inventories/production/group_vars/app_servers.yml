@@ -12,10 +12,12 @@ frontend_api_url: /api
 
 mongo_database: fullstack-blog-coursework-2
 mongo_root_username: blog
-mongo_root_password: change-me
+mongo_root_password: "{{ lookup('ansible.builtin.env', 'FULLSTACK_BLOG_MONGO_ROOT_PASSWORD') }}"
 
-backend_client_origin: http://95.163.229.40
-backend_jwt_secret: change-me
+server_name: "{{ inventory_hostname }}"
+server_public_ip: "{{ ansible_host }}"
+backend_client_origin: "http://{{ ansible_host }}"
+backend_jwt_secret: "{{ lookup('ansible.builtin.env', 'FULLSTACK_BLOG_BACKEND_JWT_SECRET') }}"
 
 deploy_owner: root
 deploy_group: root
