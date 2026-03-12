@@ -1,0 +1,17 @@
+---
+- name: Assert required runtime secrets are provided
+  ansible.builtin.assert:
+    that:
+      - mongo_root_password | length > 0
+      - backend_jwt_secret | length > 0
+    fail_msg: >-
+      Set FULLSTACK_BLOG_MONGO_ROOT_PASSWORD and FULLSTACK_BLOG_BACKEND_JWT_SECRET
+      in the local environment before running deploy playbooks.
+
+- name: Render root compose env file
+  ansible.builtin.template:
+    src: compose.env.j2
+    dest: "{{ deploy_path }}/{{ compose_env_file_name }}"
+    owner: "{{ deploy_owner }}"
+    group: "{{ deploy_group }}"
+    mode: "0600"

@@ -1,0 +1,9 @@
+- name: Bootstrap docker host
+  hosts: app_servers
+  become: true
+  gather_facts: true
+  vars_files:
+    - ../inventories/production/group_vars/app_servers.yml
+
+  roles:
+    - role: docker_host

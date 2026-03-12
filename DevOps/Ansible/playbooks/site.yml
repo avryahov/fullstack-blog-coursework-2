@@ -1,0 +1,8 @@
+- name: Bootstrap and deploy fullstack blog stack
+  import_playbook: bootstrap.yml
+
+- name: Run deploy flow
+  import_playbook: deploy.yml
+
+- name: Run smoke checks
+  import_playbook: smoke.yml

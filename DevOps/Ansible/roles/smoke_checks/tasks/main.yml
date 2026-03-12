@@ -1,0 +1,55 @@
+---
+- name: Inspect compose services before smoke checks
+  ansible.builtin.command:
+    cmd: >-
+      docker compose
+      --project-name {{ compose_project_name }}
+      ps --format json
+    chdir: "{{ deploy_path }}"
+  register: smoke_compose_ps
+  changed_when: false
+
+- name: Assert compose services are present before smoke checks
+  ansible.builtin.assert:
+    that:
+      - smoke_compose_ps.stdout | length > 0
+    fail_msg: Compose stack is not available for smoke checks.
+
+- name: Wait for reverse proxy public port
+  ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ proxy_public_port }}"
+    timeout: 60
+    state: started
+  delegate_to: localhost
+  become: false
+
+- name: Check public HTTP endpoints through reverse proxy
+  ansible.builtin.uri:
+    url: "{{ backend_client_origin }}{{ item }}"
+    method: GET
+    status_code: 200
+    follow_redirects: safe
+  delegate_to: localhost
+  become: false
+  loop: "{{ smoke_check_endpoints }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: Assert MongoDB port is not reachable from outside
+  ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ mongo_container_port }}"
+    timeout: 5
+    state: stopped
+  delegate_to: localhost
+  become: false
+
+- name: Assert backend direct port is not reachable from outside
+  ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ backend_container_port }}"
+    timeout: 5
+    state: stopped
+  delegate_to: localhost
+  become: false

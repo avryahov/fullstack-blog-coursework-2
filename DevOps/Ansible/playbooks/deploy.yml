@@ -1,0 +1,12 @@
+- name: Deploy application layout and compose stack
+  hosts: app_servers
+  become: true
+  gather_facts: true
+  vars_files:
+    - ../inventories/production/group_vars/app_servers.yml
+
+  roles:
+    - role: app_directories
+    - role: app_sync
+    - role: app_config
+    - role: compose_stack
