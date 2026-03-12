@@ -1,2 +1,31 @@
 ---
-# Compose lifecycle tasks will be added in the next implementation step.
+- name: Build and start compose stack
+  ansible.builtin.command:
+    cmd: >-
+      docker compose
+      --project-name {{ compose_project_name }}
+      up -d --build
+    chdir: "{{ deploy_path }}"
+  register: compose_stack_up
+  changed_when: >-
+    'Creating' in compose_stack_up.stderr
+    or 'Recreating' in compose_stack_up.stderr
+    or 'Starting' in compose_stack_up.stderr
+    or 'Building' in compose_stack_up.stderr
+    or 'Pulling' in compose_stack_up.stderr
+
+- name: Inspect compose services after startup
+  ansible.builtin.command:
+    cmd: >-
+      docker compose
+      --project-name {{ compose_project_name }}
+      ps --format json
+    chdir: "{{ deploy_path }}"
+  register: compose_stack_ps
+  changed_when: false
+
+- name: Assert compose services are registered
+  ansible.builtin.assert:
+    that:
+      - compose_stack_ps.stdout | length > 0
+    fail_msg: Compose stack did not report any running or created services.
